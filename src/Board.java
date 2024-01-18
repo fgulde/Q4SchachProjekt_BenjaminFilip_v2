@@ -4,16 +4,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Board {
+    private final Tile[][] tiles = new Tile[8][8]; // Erstellen Sie ein 8x8-Array von Tiles
+    private JPanel chessBoard; // Das JPanel, das das Schachbrett darstellt
 
-    private Tile[][] tiles = new Tile[8][8];
-    private JPanel chessBoard;
-
-    public Board(){
-        createBoard();
+    public Board() {
+        createBoard(); // Rufen Sie die Methode createBoard auf, um das Schachbrett zu erstellen
+        initializeBoard();
     }
 
-    public void createBoard(){
-        chessBoard = new JPanel(new GridLayout(0, 9));
+    public void createBoard() {
+        chessBoard = new JPanel(new GridLayout(8, 8));
         chessBoard.setBorder(new LineBorder(Color.BLACK));
 
         for (int i = 0; i < tiles.length; i++) {
@@ -23,7 +23,9 @@ public class Board {
                         new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
                 bTile.setIcon(icon);
                 boolean tWhite;
-                if ((i % 2 == 1 && j % 2 == 1) || (i % 2 == 0 && j % 2 == 0)){
+
+                // Überprüfen Sie, ob die Summe der Zeilen- und Spaltenindizes gerade oder ungerade ist
+                if ((i + j) % 2 == 0){
                     bTile.setBackground(Color.WHITE);
                     tWhite = true;
                 }
@@ -41,19 +43,32 @@ public class Board {
                 chessBoard.add(tiles[j][i].getbTile());
             }
         }
-
-
     }
 
     public JPanel getChessBoard() {
-        return chessBoard;
+        return chessBoard; // Getter für das Schachbrett
     }
 
     public void setChessBoard(JPanel chessBoard) {
-        this.chessBoard = chessBoard;
+        this.chessBoard = chessBoard; // Setter für das Schachbrett
     }
 
-    private void createUIComponents() {
-        JPanel chessBoard2;
+    public void initializeBoard() {
+        // Fülle das Schachbrett mit den Anfangspositionen aller Figuren
+        for (int i = 0; i < 8; i++) {
+            // Erstelle weiße Bauern an der zweiten Reihe
+            Pawn whitePawn = new Pawn(true, tiles[i][1]);
+            tiles[i][1].setPiece(whitePawn);
+            ImageIcon whitePawnIcon = new ImageIcon("src/pics/whitePawn.png");
+            tiles[i][1].getbTile().setIcon(whitePawnIcon);
+
+            // Erstelle schwarze Bauern an der siebten Reihe
+            Pawn blackPawn = new Pawn(false, tiles[i][6]);
+            tiles[i][6].setPiece(blackPawn);
+            ImageIcon blackPawnIcon = new ImageIcon("src/pics/blackPawn.png");
+            tiles[i][6].getbTile().setIcon(blackPawnIcon);
+        }
+
+
     }
 }
