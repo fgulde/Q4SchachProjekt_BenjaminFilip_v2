@@ -23,7 +23,7 @@ public abstract class Piece {
         this.position = position;
     }
 
-
+    // Methode zum Bewegen des Piece; jede Unterklasse von Piece hat somit dieselbe universelle Bewegungsmethode
     public abstract void move();
 
 }
