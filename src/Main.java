@@ -24,7 +24,7 @@ public class Main {
         // Stellt kleinste mögliche Größe des Fensters auf die Größe des Board-Objekts
         fBoard.setMinimumSize(fBoard.getSize());
 
-        // Setzt die Größe des Fensters auf 600x600 Pixel
+        // Setzt die Größe des Fensters auf 500x500 Pixel
         fBoard.setSize(new Dimension(500, 500));
 
         // Verhindert, dass das Fenster skaliert werden kann, da sonst das Schachbrett verzerrt werden würde
