@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 /*
 Mit der Tile Klasse werden die Felder des Schachbretts erstellt.
@@ -8,14 +7,15 @@ Mit der Tile Klasse werden die Felder des Schachbretts erstellt.
 public class Tile {
     private int x;
     private int y;
-    private JButton bTile; // Die Felder werden in Form von Buttons dargestellt. "b" wegen "Button"!!!
+    private JPanel pTile; // Die Felder werden in Form von Buttons dargestellt. "b" wegen "Button"!!!
     private boolean white; //true = weißes Feld, false = schwarzes Feld
     private Piece piece; // Das Piece, das sich auf diesem Feld befindet
 
-    public Tile(int x, int y, JButton bTile, boolean white) {
+
+    public Tile(int x, int y, JPanel pTile, boolean white) {
         this.x = x;
         this.y = y;
-        this.bTile = bTile;
+        this.pTile = pTile;
         this.white = white;
     }
 
@@ -27,12 +27,12 @@ public class Tile {
     public void setPiece(Piece piece) {
         this.piece = piece;
     }
-    public JButton getbTile() {
-        return bTile;
+    public JPanel getpTile() {
+        return pTile;
     }
 
-    public void setbTile(JButton bTile) {
-        this.bTile = bTile;
+    public void setpTile(JPanel pTile) {
+        this.pTile = pTile;
     }
 
     public boolean isWhite() {

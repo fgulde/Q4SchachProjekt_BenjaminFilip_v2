@@ -1,3 +1,8 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
     boolean moved = false; // Checkt ob der Pawn schon bewegt wurde, da er im ersten Zug zwei Felder voran kann
