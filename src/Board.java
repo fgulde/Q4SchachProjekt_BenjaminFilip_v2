@@ -57,13 +57,13 @@ public class Board {
         // Fülle das Schachbrett mit den Anfangspositionen aller Figuren
         for (int i = 0; i < 8; i++) {
             // Erstelle weiße Bauern an der zweiten Reihe
-            Pawn whitePawn = new Pawn(true, tiles[i][1]);
+            Pawn whitePawn = new Pawn(true,false, tiles[i][1]);
             tiles[i][1].setPiece(whitePawn);
             ImageIcon whitePawnIcon = new ImageIcon("src/pics/whitePawn.png");
             tiles[i][1].getbTile().setIcon(whitePawnIcon);
 
             // Erstelle schwarze Bauern an der siebten Reihe
-            Pawn blackPawn = new Pawn(false, tiles[i][6]);
+            Pawn blackPawn = new Pawn(false,false, tiles[i][6]);
             tiles[i][6].setPiece(blackPawn);
             ImageIcon blackPawnIcon = new ImageIcon("src/pics/blackPawn.png");
             tiles[i][6].getbTile().setIcon(blackPawnIcon);
