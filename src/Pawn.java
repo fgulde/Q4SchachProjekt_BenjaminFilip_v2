@@ -11,7 +11,7 @@ public class Pawn extends Piece {
 
     }
 
-    // Methode zum Umwandeln des Bauern
+    // Methode zum Umwandeln eines Bauern
     public void promote() {
 
     }
