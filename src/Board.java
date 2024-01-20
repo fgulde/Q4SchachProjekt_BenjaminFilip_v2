@@ -22,7 +22,7 @@ public class Board {
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
                 JPanel pTile = new JPanel(new GridBagLayout()); // Erstellt den zugehörigen Button für das Feld
-                pTile.setSize(64,64);
+                //pTile.setSize(64,64);
                 pTile.setName(String.valueOf(x+y));
                 boolean tWhite; // Wird genutzt, um Angabe über Farbe des Feldes zwischenzuspeichern
 
