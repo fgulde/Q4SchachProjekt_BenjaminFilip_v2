@@ -24,7 +24,7 @@ public class Main {
         // Wir stellen sicher, dass das Fenster nicht kleiner als seine ursprüngliche Größe gemacht werden kann
         fBoard.setMinimumSize(fBoard.getSize());
 
-        // Wir setzen die Größe des Fensters auf 800x800 Pixel
+        // Setzt die Größe des Fensters auf 800x800 Pixel
         fBoard.setSize(new Dimension(800, 800));
 
         // Wir verhindern, dass das Fenster von Benutzern skaliert wird
