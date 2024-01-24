@@ -27,6 +27,9 @@ public class Main {
         // Setzt die Größe des Fensters auf 500x500 Pixel
         fBoard.setSize(new Dimension(500, 500));
 
+        //Nennt das Fenster "Schachbrett"
+        fBoard.setTitle("Schachbrett");
+
         // Verhindert, dass das Fenster skaliert werden kann, da sonst das Schachbrett verzerrt werden würde
         fBoard.setResizable(false);
 

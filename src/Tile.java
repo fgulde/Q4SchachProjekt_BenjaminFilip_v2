@@ -9,10 +9,11 @@ public class Tile {
     private int y;
     private JPanel pTile; // Die Felder werden in Form von Buttons dargestellt. "b" wegen "Button"!!!
     private boolean white; //true = weißes Feld, false = schwarzes Feld
-    private Piece piece; // Das Piece, das sich auf diesem Feld befindet
+    private Piece occupyingPiece; // Das Piece, das sich auf diesem Feld befindet
+    public boolean occupied;
 
 
-    public Tile(int x, int y, JPanel pTile, boolean white) {
+    public Tile(int x, int y, JPanel pTile, boolean white, boolean occupied) {
         this.x = x;
         this.y = y;
         this.pTile = pTile;
@@ -20,12 +21,11 @@ public class Tile {
     }
 
     // Getter und Setter
-    public Piece getPiece() {
-        return this.piece;
+    public Piece getOccupyingPiece() {
+        return this.occupyingPiece;
     }
-
-    public void setPiece(Piece piece) {
-        this.piece = piece;
+    public void setOccupyingPiece(Piece occupyingPiece) {
+        this.occupyingPiece = occupyingPiece;
     }
     public JPanel getpTile() {
         return pTile;
@@ -50,4 +50,13 @@ public class Tile {
     public int getX() {
         return x;
     }
+
+    public boolean isOccupied() {
+        return (this.occupyingPiece != null);
+    }
+    public void setOccupied(boolean occ){
+        this.occupied = occupied;
+    }
+
+
 }

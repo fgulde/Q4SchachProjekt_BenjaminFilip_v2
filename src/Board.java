@@ -2,8 +2,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
+
 public class Board {
-    public Tile[][] tiles = new Tile[8][8]; // Die Felder werden in einem 8x8-Array gespeichert
+    public static Tile[][] tiles = new Tile[8][8]; // Die Felder werden in einem 8x8-Array gespeichert
     public JPanel chessBoard; // Das Schachbrett mit allen GUI-Elementen. Wird in Main dem JFrame hinzugefügt.
 
     public Board() {
@@ -22,6 +23,7 @@ public class Board {
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
                 JPanel pTile = new JPanel(new GridBagLayout()); // Erstellt den zugehörigen Button für das Feld
+
                 //pTile.setSize(64,64);
                 pTile.setName(String.valueOf(x+y));
                 boolean tWhite; // Wird genutzt, um Angabe über Farbe des Feldes zwischenzuspeichern
@@ -40,7 +42,8 @@ public class Board {
                     tWhite = false;
                 }
 
-                tiles[x][y] = new Tile(x, y, pTile, tWhite); // Erstellt die Felder für das "tiles"-Array
+                tiles[x][y] = new Tile(x, y, pTile, tWhite, false); // Erstellt die Felder für das "tiles"-Array
+
             }
         }
 
@@ -62,27 +65,15 @@ public class Board {
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
             Pawn whitePawn = new Pawn(true, false, tiles[x][1]);
-            tiles[x][1].setPiece(whitePawn);
-            // Gibt dem Button des Felds ein neues Icon
-            ImageIcon whitePawnIcon = new ImageIcon("src/pics/PawnWhite.png");
-            JButton pw = new JButton();
-            pw.setMargin(new Insets(0,0,0,0));
-            pw.setIcon(whitePawnIcon);
-            pw.setOpaque(false);
-            pw.setContentAreaFilled(false);
-            tiles[x][1].getpTile().add(pw);
+            tiles[x][1].setOccupyingPiece(whitePawn);
+            JButton pwButton = whitePawn.createButton();
+            tiles[x][1].getpTile().add(pwButton);
 
             // Erstellt schwarze Bauern in der siebten Reihe
             Pawn blackPawn = new Pawn(false, false, tiles[x][6]);
-            tiles[x][6].setPiece(blackPawn);
-            // Gibt dem Button des Felds ein neues Icon
-            ImageIcon blackPawnIcon = new ImageIcon("src/pics/PawnBlack.png");
-            JButton pb = new JButton();
-            pb.setMargin(new Insets(0,0,0,0));
-            pb.setIcon(blackPawnIcon);
-            pb.setOpaque(false);
-            pb.setContentAreaFilled(false);
-            tiles[x][6].getpTile().add(pb);
+            tiles[x][6].setOccupyingPiece(blackPawn);
+            JButton pbButton = blackPawn.createButton();
+            tiles[x][6].getpTile().add(pbButton);
         }
     }
 }
