@@ -1,12 +1,13 @@
-/*
-Die Piece Klasse ist eine Vorlage für alle Spielfigur-Klassen. Sie legt einige universelle Attribute und Methoden fest,
-die alle Spielfiguren enthalten müssen. Dadurch wird sichergestellt, dass der Code einheitlich und übersichtlich bleibt.
- */
-public abstract class Piece {
-    private boolean white; // true = weißes Piece, false = schwarzes Piece
-    private boolean killed; // Gibt an, ob die Spielfigur geschlagen wurde
-    private Tile position; // Position des Piece, in Form eines Tiles
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+public abstract class Piece {
+    private boolean white;
+    private boolean killed;
+    private Tile position;
 
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
@@ -14,7 +15,6 @@ public abstract class Piece {
         this.position = position;
     }
 
-    // Getter und Setter für die Position
     public Tile getPosition() {
         return this.position;
     }
@@ -23,7 +23,45 @@ public abstract class Piece {
         this.position = position;
     }
 
-    // Methode zum Bewegen des Piece; jede Unterklasse von Piece hat somit dieselbe universelle Bewegungsmethode
+    public boolean isWhite() {
+        return this.white;
+    }
+
+    // Move method
     public abstract void move();
 
+    // Button creation method
+    public JButton createButton() {
+        JButton button = new JButton();
+        button.addActionListener(new FeldActionListener(this));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setIcon(getIconPath());
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        return button;
+    }
+
+    // Abstract method to get the icon path
+    protected abstract ImageIcon getIconPath();
+
+    // ActionListener for field clicks
+    private static class FeldActionListener implements ActionListener {
+        private final Piece piece;
+
+        public FeldActionListener(Piece piece) {
+            this.piece = piece;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Hier können Sie die Logik für das Klicken auf das Feld implementieren
+            // Überprüfen Sie, ob das Feld besetzt ist, bevor Sie Aktionen ausführen
+            if (piece.getPosition().isOccupied()) {
+                // Implementieren Sie die Logik für das Klicken auf ein besetztes Feld
+                piece.move();
+                System.out.println("Feld (" + (piece.getPosition().getX() + 1)+ ", " + piece.getPosition().getY() + ") wurde geklickt");
+            }
+        }
+    }
 }
+
