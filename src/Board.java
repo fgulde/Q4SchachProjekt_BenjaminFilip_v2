@@ -67,13 +67,13 @@ public class Board {
             // Erstellt weiße Bauern in der zweiten Reihe
             Pawn whitePawn = new Pawn(true, false, tiles[x][1]);
             tiles[x][1].setOccupyingPiece(whitePawn);
-            JButton pwButton = whitePawn.createButton();
+            JButton pwButton = whitePawn.createPieceButton();
             tiles[x][1].getpTile().add(pwButton);
 
             // Erstellt schwarze Bauern in der siebten Reihe
             Pawn blackPawn = new Pawn(false, false, tiles[x][6]);
             tiles[x][6].setOccupyingPiece(blackPawn);
-            JButton pbButton = blackPawn.createButton();
+            JButton pbButton = blackPawn.createPieceButton();
             tiles[x][6].getpTile().add(pbButton);
         }
     }

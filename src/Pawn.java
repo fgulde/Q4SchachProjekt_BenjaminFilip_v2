@@ -9,10 +9,10 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void move() {
+    public void moveLogic() {
         if (!moved) {
             // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
+            int direction = isWhite() ? 1 : -1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
             int newY = currentTile.getY() + (2 * direction);
@@ -29,7 +29,7 @@ public class Pawn extends Piece {
             }
         } else {
             // Falls der Bauer bereits bewegt wurde, kann er nur noch ein Feld ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
+            int direction = isWhite() ? 1 : -1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
             int newY = currentTile.getY() + direction;
@@ -100,6 +100,6 @@ public class Pawn extends Piece {
 
     @Override
     protected ImageIcon getIconPath() {
-        return new ImageIcon(isWhite() ? "src/pics/PawnWhite.png" : "src/pics/PawnBlack.png");
+        return new ImageIcon(isWhite() ? "src/pics/PawnBlack.png" : "src/pics/PawnWhite.png");
     }
 }

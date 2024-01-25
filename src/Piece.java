@@ -27,13 +27,15 @@ public abstract class Piece {
         return this.white;
     }
 
+    public abstract void calculateNewPos();
+
     // Move method
-    public abstract void move();
+    public abstract void moveLogic();
 
     // Button creation method
-    public JButton createButton() {
+    public JButton createPieceButton() {
         JButton button = new JButton();
-        button.addActionListener(new FeldActionListener(this));
+        button.addActionListener(new PieceActionListener(this));
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setIcon(getIconPath());
         button.setOpaque(false);
@@ -41,14 +43,25 @@ public abstract class Piece {
         return button;
     }
 
+    public JButton createFieldButton(Tile position) {
+        JButton button = new JButton();
+        button.addActionListener(new FieldActionListener(position, this));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setIcon(getIconPath());
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        System.out.println("Neuer Button an Position (" + (position.getX() + 1) + "," + (position.getY() + 1) + ") erzeugt.");
+        return button;
+    }
+
     // Abstract method to get the icon path
     protected abstract ImageIcon getIconPath();
 
     // ActionListener for field clicks
-    private static class FeldActionListener implements ActionListener {
+    public static class PieceActionListener implements ActionListener {
         private final Piece piece;
 
-        public FeldActionListener(Piece piece) {
+        public PieceActionListener(Piece piece) {
             this.piece = piece;
         }
 
@@ -60,5 +73,24 @@ public abstract class Piece {
 
         }
     }
+    public static class FieldActionListener implements ActionListener {
+        private final Tile newTile;
+        private final Piece piece;
+        public FieldActionListener(Tile newTile, Piece piece) {
+            this.newTile = newTile;
+            this.piece = piece;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Überprüfen Sie, ob das Feld besetzt ist, bevor Sie Aktionen ausführen
+            if (piece.getPosition().isOccupied()) {
+                piece.moveLogic();
+            }
+        }
+    }
+
+
 }
+
 
