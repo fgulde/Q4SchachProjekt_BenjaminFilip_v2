@@ -60,6 +60,7 @@ public class Board {
         return chessBoard;
     }
 
+
     // Füllt das Schachbrett mit den Anfangspositionen aller Figuren
     public void initializeBoard() {
         for (int x = 0; x < 8; x++) {

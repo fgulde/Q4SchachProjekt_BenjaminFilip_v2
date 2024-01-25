@@ -51,6 +51,14 @@ public class Tile {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public boolean isOccupied() {
         return (this.occupyingPiece != null);
     }

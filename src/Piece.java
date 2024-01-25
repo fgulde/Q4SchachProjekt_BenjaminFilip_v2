@@ -55,12 +55,9 @@ public abstract class Piece {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Hier können Sie die Logik für das Klicken auf das Feld implementieren
-            // Überprüfen Sie, ob das Feld besetzt ist, bevor Sie Aktionen ausführen
-            if (piece.getPosition().isOccupied()) {
-                // Implementieren Sie die Logik für das Klicken auf ein besetztes Feld
-                piece.move();
-                System.out.println("Feld (" + (piece.getPosition().getX() + 1)+ ", " + piece.getPosition().getY() + ") wurde geklickt");
-            }
+            piece.calculateNewPos();
+            System.out.println("Feld (" + (piece.getPosition().getX() + 1)+ ", " + (piece.getPosition().getY() + 1) + ") wurde geklickt");
+
         }
     }
 }
