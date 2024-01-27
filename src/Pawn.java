@@ -67,10 +67,12 @@ public class Pawn extends Piece {
             if (isValidMove(newX, newY)) {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
+                Board.tiles[newX][newY].getpTile().updateUI();
             }
             if (isValidMove(newX, newY1)) {
                 JButton newButton1 = createFieldButton(newTile1);
                 Board.tiles[newX][newY1].getpTile().add(newButton1);
+                Board.tiles[newX][newY].getpTile().updateUI();
             }
         } else {
             // Falls der Bauer bereits bewegt wurde, kann er nur noch ein Feld ziehen
@@ -84,6 +86,7 @@ public class Pawn extends Piece {
             if (isValidMove(newX, newY)) {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
+                Board.tiles[newX][newY].getpTile().updateUI();
             }
         }
     }

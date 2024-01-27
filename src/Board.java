@@ -77,4 +77,8 @@ public class Board {
             tiles[x][6].getpTile().add(pbButton);
         }
     }
+
+    public static Tile[][] getTiles() {
+        return tiles;
+    }
 }
