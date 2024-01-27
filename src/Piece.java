@@ -47,10 +47,9 @@ public abstract class Piece {
         JButton button = new JButton();
         button.addActionListener(new FieldActionListener(position, this));
         button.setMargin(new Insets(0, 0, 0, 0));
-        button.setIcon(getIconPath());
         button.setOpaque(false);
         button.setContentAreaFilled(false);
-        System.out.println("Neuer Button an Position (" + (position.getX() + 1) + "," + (position.getY() + 1) + ") erzeugt.");
+        button.setIcon(new ImageIcon("src/pics/Target.png"));
         return button;
     }
 
