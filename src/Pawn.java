@@ -23,6 +23,7 @@ public class Pawn extends Piece {
         position.setOccupied(false);
         position.setOccupyingPiece(null);
         setPosition(newTile);
+        moved = true;
     }
     @Override
     public void calculateNewPos(){
