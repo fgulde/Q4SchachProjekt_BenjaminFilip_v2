@@ -9,46 +9,19 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void moveLogic() {
-        if (!moved) {
-            // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
-            int direction = isWhite() ? 1 : -1;  // Richtung hängt von der Farbe des Bauern ab
-            Tile currentTile = getPosition();
-            int newX = currentTile.getX();
-            int newY = currentTile.getY() + (2 * direction);
-            int newY1 = currentTile.getY() + direction;
-
-            // Überprüfen, ob die neuen Positionen innerhalb des Spielbretts liegen
-            if (isValidMove(newX, newY)) {
-                move(newX, newY,currentTile);
-                moved = true;  // Setze moved auf true, da der Bauer jetzt bewegt wurde
-            }
-            if (isValidMove(newX, newY1)) {
-                move(newX, newY1,currentTile);
-                moved = true;  // Setze moved auf true, da der Bauer jetzt bewegt wurde
-            }
-        } else {
-            // Falls der Bauer bereits bewegt wurde, kann er nur noch ein Feld ziehen
-            int direction = isWhite() ? 1 : -1;  // Richtung hängt von der Farbe des Bauern ab
-            Tile currentTile = getPosition();
-            int newX = currentTile.getX();
-            int newY = currentTile.getY() + direction;
-
-            // Überprüfen, ob die neue Position innerhalb des Spielbretts liegt
-            if (isValidMove(newX, newY)) {
-                move(newX,newY,currentTile);
-            }
-        }
-    }
-
-    public void move(int newX, int newY, Tile currentTile){
+    public void move(int newX, int newY, Tile buttonTile){
         // Bewege den Bauer auf das neue Feld
+        Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
+        Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
         Tile newTile = Board.tiles[newX][newY];
         getPosition().setOccupied(false);
         newTile.setOccupied(true);
         newTile.setOccupyingPiece(this);
-        currentTile.setOccupied(false);
-        currentTile.setOccupyingPiece(null);
+        JButton pwButton = createPieceButton();
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().remove(0);
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().add(pwButton);
+        position.setOccupied(false);
+        position.setOccupyingPiece(null);
         setPosition(newTile);
     }
     @Override

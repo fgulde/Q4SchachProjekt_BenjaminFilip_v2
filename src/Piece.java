@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 public abstract class Piece {
     private boolean white;
     private boolean killed;
-    private Tile position;
+    public Tile position;
 
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
@@ -30,7 +30,7 @@ public abstract class Piece {
     public abstract void calculateNewPos();
 
     // Move method
-    public abstract void moveLogic();
+    public abstract void move(int newX, int newY, Tile currentTile);
 
     // Button creation method
     public JButton createPieceButton() {
@@ -75,6 +75,7 @@ public abstract class Piece {
     public static class FieldActionListener implements ActionListener {
         private final Tile newTile;
         private final Piece piece;
+
         public FieldActionListener(Tile newTile, Piece piece) {
             this.newTile = newTile;
             this.piece = piece;
@@ -84,7 +85,7 @@ public abstract class Piece {
         public void actionPerformed(ActionEvent e) {
             // Überprüfen Sie, ob das Feld besetzt ist, bevor Sie Aktionen ausführen
             if (piece.getPosition().isOccupied()) {
-                piece.moveLogic();
+                piece.move(newTile.getX(), newTile.getY(), newTile);
             }
         }
     }
