@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,6 +50,10 @@ public abstract class Piece {
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Target.png"));
+        button.setSelected(true);
+        if(button.isSelected()){
+            System.out.println("Hello");
+        }
         return button;
     }
 
@@ -83,9 +87,22 @@ public abstract class Piece {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Überprüfen Sie, ob das Feld besetzt ist, bevor Sie Aktionen ausführen
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY(), newTile);
+                }
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++){
+                    for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                        Component c = Board.tiles[i][j].getpTile().getComponent(k);
+                        if (c instanceof JButton){
+                            if(((JButton) c).isSelected()){
+                                Board.tiles[i][j].getpTile().remove(k);
+                                Board.tiles[i][j].getpTile().updateUI();
+                            }
+
+                        }
+                    }
+                }
             }
         }
     }
