@@ -8,6 +8,7 @@ public abstract class Piece {
     private boolean white;
     private boolean killed;
     public Tile position;
+    private boolean moved = false;
 
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
@@ -30,7 +31,22 @@ public abstract class Piece {
     public abstract void calculateNewPos();
 
     // Move method
-    public abstract void move(int newX, int newY, Tile currentTile);
+    public void move(int newX, int newY, Tile buttonTile){
+        // Bewege den Bauer auf das neue Feld
+        Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
+        Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
+        Tile newTile = Board.tiles[newX][newY];
+        getPosition().setOccupied(false);
+        newTile.setOccupied(true);
+        newTile.setOccupyingPiece(this);
+        JButton pwButton = createPieceButton();
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().remove(0);
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().add(pwButton);
+        position.setOccupied(false);
+        position.setOccupyingPiece(null);
+        setPosition(newTile);
+        moved = true;
+    }
 
     // Button creation method
     public JButton createPieceButton() {
@@ -107,7 +123,9 @@ public abstract class Piece {
         }
     }
 
-
+    public boolean isMoved() {
+        return moved;
+    }
 }
 
 

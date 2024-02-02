@@ -2,32 +2,15 @@ import javax.swing.*;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
-    private boolean moved = false;
 
     public Pawn(boolean isWhite, boolean killed, Tile position) {
         super(isWhite, killed, position);
     }
 
-    @Override
-    public void move(int newX, int newY, Tile buttonTile){
-        // Bewege den Bauer auf das neue Feld
-        Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
-        Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
-        Tile newTile = Board.tiles[newX][newY];
-        getPosition().setOccupied(false);
-        newTile.setOccupied(true);
-        newTile.setOccupyingPiece(this);
-        JButton pwButton = createPieceButton();
-        Board.tiles[newTile.getX()][newTile.getY()].getpTile().remove(0);
-        Board.tiles[newTile.getX()][newTile.getY()].getpTile().add(pwButton);
-        position.setOccupied(false);
-        position.setOccupyingPiece(null);
-        setPosition(newTile);
-        moved = true;
-    }
+
     @Override
     public void calculateNewPos(){
-        if (!moved) {
+        if (!isMoved()) {
             // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
             int direction = isWhite() ? 1 : -1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
