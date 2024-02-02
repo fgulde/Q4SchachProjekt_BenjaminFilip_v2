@@ -51,9 +51,6 @@ public abstract class Piece {
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Target.png"));
         button.setSelected(true);
-        if(button.isSelected()){
-            System.out.println("Hello");
-        }
         return button;
     }
 
@@ -71,9 +68,8 @@ public abstract class Piece {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Hier können Sie die Logik für das Klicken auf das Feld implementieren
+            removeFieldButtons();
             piece.calculateNewPos();
-            System.out.println("Feld (" + (piece.getPosition().getX() + 1)+ ", " + (piece.getPosition().getY() + 1) + ") wurde geklickt");
-
         }
     }
     public static class FieldActionListener implements ActionListener {
@@ -90,17 +86,21 @@ public abstract class Piece {
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY(), newTile);
                 }
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++){
-                    for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
-                        Component c = Board.tiles[i][j].getpTile().getComponent(k);
-                        if (c instanceof JButton){
-                            if(((JButton) c).isSelected()){
-                                Board.tiles[i][j].getpTile().remove(k);
-                                Board.tiles[i][j].getpTile().updateUI();
-                            }
+            removeFieldButtons();
+        }
+    }
 
+    public static void removeFieldButtons(){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++){
+                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                    Component c = Board.tiles[i][j].getpTile().getComponent(k);
+                    if (c instanceof JButton){
+                        if(((JButton) c).isSelected()){
+                            Board.tiles[i][j].getpTile().remove(k);
+                            Board.tiles[i][j].getpTile().updateUI();
                         }
+
                     }
                 }
             }
