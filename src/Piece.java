@@ -31,7 +31,7 @@ public abstract class Piece {
     public abstract void calculateNewPos();
 
     // Move method
-    public void move(int newX, int newY, Tile buttonTile){
+    public void move(int newX, int newY){
         // Bewege den Bauer auf das neue Feld
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
@@ -100,8 +100,8 @@ public abstract class Piece {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (piece.getPosition().isOccupied()) {
-                piece.move(newTile.getX(), newTile.getY(), newTile);
-                }
+                piece.move(newTile.getX(), newTile.getY());
+            }
             removeFieldButtons();
         }
     }
