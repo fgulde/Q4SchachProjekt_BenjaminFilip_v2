@@ -8,6 +8,7 @@ public abstract class Piece {
     private boolean white;
     private boolean killed;
     public Tile position;
+    private boolean moved = false;
 
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
@@ -30,7 +31,22 @@ public abstract class Piece {
     public abstract void calculateNewPos();
 
     // Move method
-    public abstract void move(int newX, int newY, Tile currentTile);
+    public void move(int newX, int newY){
+        // Bewege den Bauer auf das neue Feld
+        Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
+        Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
+        Tile newTile = Board.tiles[newX][newY];
+        getPosition().setOccupied(false);
+        newTile.setOccupied(true);
+        newTile.setOccupyingPiece(this);
+        JButton pwButton = createPieceButton();
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().remove(0);
+        Board.tiles[newTile.getX()][newTile.getY()].getpTile().add(pwButton);
+        position.setOccupied(false);
+        position.setOccupyingPiece(null);
+        setPosition(newTile);
+        moved = true;
+    }
 
     // Button creation method
     public JButton createPieceButton() {
@@ -51,9 +67,6 @@ public abstract class Piece {
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Target.png"));
         button.setSelected(true);
-        if(button.isSelected()){
-            System.out.println("Hello");
-        }
         return button;
     }
 
@@ -71,9 +84,8 @@ public abstract class Piece {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Hier können Sie die Logik für das Klicken auf das Feld implementieren
+            removeFieldButtons();
             piece.calculateNewPos();
-            System.out.println("Feld (" + (piece.getPosition().getX() + 1)+ ", " + (piece.getPosition().getY() + 1) + ") wurde geklickt");
-
         }
     }
     public static class FieldActionListener implements ActionListener {
@@ -88,26 +100,32 @@ public abstract class Piece {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (piece.getPosition().isOccupied()) {
-                piece.move(newTile.getX(), newTile.getY(), newTile);
-                }
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++){
-                    for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
-                        Component c = Board.tiles[i][j].getpTile().getComponent(k);
-                        if (c instanceof JButton){
-                            if(((JButton) c).isSelected()){
-                                Board.tiles[i][j].getpTile().remove(k);
-                                Board.tiles[i][j].getpTile().updateUI();
-                            }
+                piece.move(newTile.getX(), newTile.getY());
+            }
+            removeFieldButtons();
+        }
+    }
 
+    public static void removeFieldButtons(){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++){
+                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                    Component c = Board.tiles[i][j].getpTile().getComponent(k);
+                    if (c instanceof JButton){
+                        if(((JButton) c).isSelected()){
+                            Board.tiles[i][j].getpTile().remove(k);
+                            Board.tiles[i][j].getpTile().updateUI();
                         }
+
                     }
                 }
             }
         }
     }
 
-
+    public boolean isMoved() {
+        return moved;
+    }
 }
 
 
