@@ -60,22 +60,64 @@ public class Board {
         return chessBoard;
     }
 
+    private void createAndAddPiece(Piece piece, Tile tile) {
+        tile.setOccupyingPiece(piece);
+        JButton button = piece.createPieceButton();
+        tile.getpTile().add(button);
+    }
+
 
     // Füllt das Schachbrett mit den Anfangspositionen aller Figuren
     public void initializeBoard() {
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
             Pawn whitePawn = new Pawn(true, false, tiles[x][1]);
-            tiles[x][1].setOccupyingPiece(whitePawn);
-            JButton pwButton = whitePawn.createPieceButton();
-            tiles[x][1].getpTile().add(pwButton);
+            createAndAddPiece(whitePawn, tiles[x][1]);
 
             // Erstellt schwarze Bauern in der siebten Reihe
             Pawn blackPawn = new Pawn(false, false, tiles[x][6]);
-            tiles[x][6].setOccupyingPiece(blackPawn);
-            JButton pbButton = blackPawn.createPieceButton();
-            tiles[x][6].getpTile().add(pbButton);
+            createAndAddPiece(blackPawn, tiles[x][6]);
         }
+        Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
+        createAndAddPiece(whiteBishop1, tiles[2][7]);
+        Bishop whiteBishop2 = new Bishop(true,false,tiles[5][7]);
+        createAndAddPiece(whiteBishop2, tiles[5][7]);
+        Bishop blackBishop1 = new Bishop(false,false,tiles[2][0]);
+        createAndAddPiece(blackBishop1, tiles[2][0]);
+        Bishop blackBishop2 = new Bishop(false,false,tiles[5][0]);
+        createAndAddPiece(blackBishop2, tiles[5][0]);
+
+
+        Rook whiteRook1 = new Rook(true,false,tiles[0][7]);
+        createAndAddPiece(whiteRook1, tiles[0][7]);
+        Rook whiteRook2 = new Rook(true,false,tiles[7][7]);
+        createAndAddPiece(whiteRook2, tiles[7][7]);
+        Rook blackRook1 = new Rook(false,false,tiles[0][0]);
+        createAndAddPiece(blackRook1, tiles[0][0]);
+        Rook blackRook2 = new Rook(false,false,tiles[7][0]);
+        createAndAddPiece(blackRook2, tiles[7][0]);
+
+
+        Knight whiteKnight1 = new Knight(true,false,tiles[1][7]);
+        createAndAddPiece(whiteKnight1, tiles[1][7]);
+        Knight whiteKnight2 = new Knight(true,false,tiles[6][7]);
+        createAndAddPiece(whiteKnight2, tiles[6][7]);
+        Knight blackKnight1 = new Knight(false,false,tiles[1][0]);
+        createAndAddPiece(blackKnight1, tiles[1][0]);
+        Knight blackKnight2 = new Knight(false,false,tiles[6][0]);
+        createAndAddPiece(blackKnight2, tiles[6][0]);
+
+
+        Queen whiteQueen = new Queen(true, false, tiles[3][7]);
+        createAndAddPiece(whiteQueen, tiles[3][7]);
+        Queen blackQueen = new Queen(false, false, tiles[3][0]);
+        createAndAddPiece(blackQueen, tiles[3][0]);
+
+
+        King whiteKing = new King(true, false, tiles[4][7]);
+        createAndAddPiece(whiteKing, tiles[4][7]);
+        King blackKing = new King(false, false, tiles[4][0]);
+        createAndAddPiece(blackKing, tiles[4][0]);
     }
 
     public static Tile[][] getTiles() {
