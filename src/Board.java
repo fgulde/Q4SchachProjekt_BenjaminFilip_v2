@@ -60,107 +60,64 @@ public class Board {
         return chessBoard;
     }
 
+    private void createAndAddPiece(Piece piece, Tile tile) {
+        tile.setOccupyingPiece(piece);
+        JButton button = piece.createPieceButton();
+        tile.getpTile().add(button);
+    }
+
 
     // Füllt das Schachbrett mit den Anfangspositionen aller Figuren
     public void initializeBoard() {
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
             Pawn whitePawn = new Pawn(true, false, tiles[x][1]);
-            tiles[x][1].setOccupyingPiece(whitePawn);
-            JButton pwButton = whitePawn.createPieceButton();
-            tiles[x][1].getpTile().add(pwButton);
+            createAndAddPiece(whitePawn, tiles[x][1]);
 
             // Erstellt schwarze Bauern in der siebten Reihe
             Pawn blackPawn = new Pawn(false, false, tiles[x][6]);
-            tiles[x][6].setOccupyingPiece(blackPawn);
-            JButton pbButton = blackPawn.createPieceButton();
-            tiles[x][6].getpTile().add(pbButton);
+            createAndAddPiece(blackPawn, tiles[x][6]);
         }
         Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
-        tiles[2][7].setOccupyingPiece(whiteBishop1);
-        JButton bwButton1 = whiteBishop1.createPieceButton();
-        tiles[2][7].getpTile().add(bwButton1);
-
+        createAndAddPiece(whiteBishop1, tiles[2][7]);
         Bishop whiteBishop2 = new Bishop(true,false,tiles[5][7]);
-        tiles[5][7].setOccupyingPiece(whiteBishop2);
-        JButton bwButton2 = whiteBishop2.createPieceButton();
-        tiles[5][7].getpTile().add(bwButton2);
-
+        createAndAddPiece(whiteBishop2, tiles[5][7]);
         Bishop blackBishop1 = new Bishop(false,false,tiles[2][0]);
-        tiles[2][0].setOccupyingPiece(blackBishop1);
-        JButton bbButton1 = blackBishop1.createPieceButton();
-        tiles[2][0].getpTile().add(bbButton1);
-
+        createAndAddPiece(blackBishop1, tiles[2][0]);
         Bishop blackBishop2 = new Bishop(false,false,tiles[5][0]);
-        tiles[5][0].setOccupyingPiece(blackBishop2);
-        JButton bbButton2 = blackBishop2.createPieceButton();
-        tiles[5][0].getpTile().add(bbButton2);
+        createAndAddPiece(blackBishop2, tiles[5][0]);
 
 
         Rook whiteRook1 = new Rook(true,false,tiles[0][7]);
-        tiles[0][7].setOccupyingPiece(whiteRook1);
-        JButton rwButton1 = whiteRook1.createPieceButton();
-        tiles[0][7].getpTile().add(rwButton1);
-
+        createAndAddPiece(whiteRook1, tiles[0][7]);
         Rook whiteRook2 = new Rook(true,false,tiles[7][7]);
-        tiles[7][7].setOccupyingPiece(whiteRook2);
-        JButton rwButton2 = whiteRook2.createPieceButton();
-        tiles[7][7].getpTile().add(rwButton2);
-
+        createAndAddPiece(whiteRook2, tiles[7][7]);
         Rook blackRook1 = new Rook(false,false,tiles[0][0]);
-        tiles[0][0].setOccupyingPiece(blackRook1);
-        JButton rbButton1 = blackRook1.createPieceButton();
-        tiles[0][0].getpTile().add(rbButton1);
-
+        createAndAddPiece(blackRook1, tiles[0][0]);
         Rook blackRook2 = new Rook(false,false,tiles[7][0]);
-        tiles[7][0].setOccupyingPiece(blackRook2);
-        JButton rbButton2 = blackRook2.createPieceButton();
-        tiles[7][0].getpTile().add(rbButton2);
+        createAndAddPiece(blackRook2, tiles[7][0]);
 
 
         Knight whiteKnight1 = new Knight(true,false,tiles[1][7]);
-        tiles[1][7].setOccupyingPiece(whiteKnight1);
-        JButton kwButton1 = whiteKnight1.createPieceButton();
-        tiles[1][7].getpTile().add(kwButton1);
-
+        createAndAddPiece(whiteKnight1, tiles[1][7]);
         Knight whiteKnight2 = new Knight(true,false,tiles[6][7]);
-        tiles[6][7].setOccupyingPiece(whiteKnight2);
-        JButton kwButton2 = whiteKnight2.createPieceButton();
-        tiles[6][7].getpTile().add(kwButton2);
-
+        createAndAddPiece(whiteKnight2, tiles[6][7]);
         Knight blackKnight1 = new Knight(false,false,tiles[1][0]);
-        tiles[1][0].setOccupyingPiece(blackKnight1);
-        JButton kbButton1 = blackKnight1.createPieceButton();
-        tiles[1][0].getpTile().add(kbButton1);
-
+        createAndAddPiece(blackKnight1, tiles[1][0]);
         Knight blackKnight2 = new Knight(false,false,tiles[6][0]);
-        tiles[6][0].setOccupyingPiece(blackKnight2);
-        JButton kbButton2 = blackKnight2.createPieceButton();
-        tiles[6][0].getpTile().add(kbButton2);
+        createAndAddPiece(blackKnight2, tiles[6][0]);
 
 
         Queen whiteQueen = new Queen(true, false, tiles[3][7]);
-        tiles[3][7].setOccupyingPiece(whiteQueen);
-        JButton qwButton = whiteQueen.createPieceButton();
-        tiles[3][7].getpTile().add(qwButton);
-
-        // Erstellt schwarze Bauern in der siebten Reihe
+        createAndAddPiece(whiteQueen, tiles[3][7]);
         Queen blackQueen = new Queen(false, false, tiles[3][0]);
-        tiles[3][0].setOccupyingPiece(blackQueen);
-        JButton qbButton = blackQueen.createPieceButton();
-        tiles[3][0].getpTile().add(qbButton);
+        createAndAddPiece(blackQueen, tiles[3][0]);
 
 
         King whiteKing = new King(true, false, tiles[4][7]);
-        tiles[4][7].setOccupyingPiece(whiteKing);
-        JButton kwButton = whiteKing.createPieceButton();
-        tiles[4][7].getpTile().add(kwButton);
-
-        // Erstellt schwarze Bauern in der siebten Reihe
+        createAndAddPiece(whiteKing, tiles[4][7]);
         King blackKing = new King(false, false, tiles[4][0]);
-        tiles[4][0].setOccupyingPiece(blackKing);
-        JButton kbButton = blackKing.createPieceButton();
-        tiles[4][0].getpTile().add(kbButton);
+        createAndAddPiece(blackKing, tiles[4][0]);
     }
 
     public static Tile[][] getTiles() {
