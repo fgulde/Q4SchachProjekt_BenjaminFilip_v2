@@ -55,7 +55,7 @@ public abstract class Piece {
     private void checkPromotion() {
         if (this instanceof Pawn) {
             int yPosition = getPosition().getY();
-            if ((yPosition == 7 && isWhite()) || (yPosition == 0 && !isWhite())) {
+            if ((yPosition == 0 && isWhite()) || (yPosition == 7 && !isWhite())) {
                 // Der Bauer hat die gegnerische Grundreihe erreicht
                 ((Pawn) this).promote();
             }

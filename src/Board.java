@@ -71,12 +71,12 @@ public class Board {
     public void initializeBoard() {
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
-            Pawn whitePawn = new Pawn(true, false, tiles[x][1]);
-            createAndAddPiece(whitePawn, tiles[x][1]);
+            Pawn whitePawn = new Pawn(true, false, tiles[x][6]);
+            createAndAddPiece(whitePawn, tiles[x][6]);
 
             // Erstellt schwarze Bauern in der siebten Reihe
-            Pawn blackPawn = new Pawn(false, false, tiles[x][6]);
-            createAndAddPiece(blackPawn, tiles[x][6]);
+            Pawn blackPawn = new Pawn(false, false, tiles[x][1]);
+            createAndAddPiece(blackPawn, tiles[x][1]);
         }
         Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
         createAndAddPiece(whiteBishop1, tiles[2][7]);
@@ -118,6 +118,7 @@ public class Board {
         createAndAddPiece(whiteKing, tiles[4][7]);
         King blackKing = new King(false, false, tiles[4][0]);
         createAndAddPiece(blackKing, tiles[4][0]);
+
     }
 
     public static Tile[][] getTiles() {
