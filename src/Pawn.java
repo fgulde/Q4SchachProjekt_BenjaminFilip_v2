@@ -96,7 +96,6 @@ public class Pawn extends Piece {
     public void promote() {
         boolean color = !isWhite();
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
-            // Füge hier den Code für die Bauernumwandlung ein
             SwingUtilities.invokeLater(() -> {
                 String[] options = {"Queen", "Rook", "Bishop", "Knight"};
                 int choice = JOptionPane.showOptionDialog(null, "Choose a piece to promote to:", "Promotion",
