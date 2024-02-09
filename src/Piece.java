@@ -46,8 +46,21 @@ public abstract class Piece {
         position.setOccupyingPiece(null);
         setPosition(newTile);
         moved = true;
+
+        // Überprüfe, ob der Bauer die gegnerische Grundreihe erreicht hat
+        checkPromotion();
     }
 
+    // Methode zur Überprüfung, ob der Bauer die gegnerische Grundreihe erreicht hat
+    private void checkPromotion() {
+        if (this instanceof Pawn) {
+            int yPosition = getPosition().getY();
+            if ((yPosition == 0 && isWhite()) || (yPosition == 7 && !isWhite())) {
+                // Der Bauer hat die gegnerische Grundreihe erreicht
+                ((Pawn) this).promote();
+            }
+        }
+    }
     // Button creation method
     public JButton createPieceButton() {
         JButton button = new JButton();
@@ -81,6 +94,7 @@ public abstract class Piece {
             this.piece = piece;
         }
 
+
         @Override
         public void actionPerformed(ActionEvent e) {
             // Hier können Sie die Logik für das Klicken auf das Feld implementieren
@@ -101,6 +115,7 @@ public abstract class Piece {
         public void actionPerformed(ActionEvent e) {
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY());
+
             }
             removeFieldButtons();
         }
