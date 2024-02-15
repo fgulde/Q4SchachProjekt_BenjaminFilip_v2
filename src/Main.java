@@ -30,6 +30,8 @@ public class Main {
         //Nennt das Fenster "Schachbrett"
         fBoard.setTitle("Schachbrett");
 
+        fBoard.setIconImage(new ImageIcon("src/pics/Chess.png").getImage());
+
         // Verhindert, dass das Fenster skaliert werden kann, da sonst das Schachbrett verzerrt werden würde
         fBoard.setResizable(false);
 

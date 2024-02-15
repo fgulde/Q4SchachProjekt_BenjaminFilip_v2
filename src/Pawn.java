@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
@@ -92,7 +93,7 @@ public class Pawn extends Piece {
             SwingUtilities.invokeLater(() -> {
                 String[] options = {"Queen", "Rook", "Bishop", "Knight"};
                 int choice = JOptionPane.showOptionDialog(null, "Choose a piece to promote to:", "Promotion",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);
 
                 Piece promotedPiece = switch (choice) {
                     case 0 -> new Queen(color, false, getPosition());
@@ -111,7 +112,6 @@ public class Pawn extends Piece {
                 getPosition().getpTile().add(button);
                 getPosition().getpTile().updateUI();
             });
-
     }
 
 
