@@ -1,5 +1,8 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
@@ -90,10 +93,31 @@ public class Pawn extends Piece {
     public void promote() {
         boolean color = isWhite();
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
+            String notifySfx = "src/sfx/notify.wav";
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(notifySfx));
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                clip.setFramePosition(0);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                throw new RuntimeException(ex);
+            }
             SwingUtilities.invokeLater(() -> {
                 String[] options = {"Queen", "Rook", "Bishop", "Knight"};
                 int choice = JOptionPane.showOptionDialog(null, "Choose a piece to promote to:", "Promotion",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);
+
+                String promotionSfx = "src/sfx/promotion.wav";
+                try {
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(promotionSfx));
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(ais);
+                    clip.setFramePosition(0);
+                    clip.start();
+                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                }
 
                 Piece promotedPiece = switch (choice) {
                     case 0 -> new Queen(color, false, getPosition());

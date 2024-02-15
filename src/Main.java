@@ -1,8 +1,22 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
+        String startSfx = "src/sfx/start.wav";
+        try {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
+            Clip clip = AudioSystem.getClip();
+            clip.open(ais);
+            clip.setFramePosition(0);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            throw new RuntimeException(ex);
+        }
+
         // Neues Schachbrett, wobei createBoard() und initializeBoard() durch Konstruktor ausgeführt werden
         Board board = new Board();
 
