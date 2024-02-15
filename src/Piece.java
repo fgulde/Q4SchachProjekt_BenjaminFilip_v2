@@ -141,6 +141,15 @@ public abstract class Piece {
     public boolean isMoved() {
         return moved;
     }
+
+    protected static boolean isValidMove(int x, int y) {
+        if (x < 8 && x > -1 && y < 8 && y > -1) {
+            if (Board.tiles[x][y].getOccupyingPiece() != null) {
+                return false;
+            } else return true;
+        } else return false;
+    }
+
 }
 
 

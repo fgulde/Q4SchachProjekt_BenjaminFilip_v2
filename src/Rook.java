@@ -61,6 +61,36 @@ public class Rook extends Piece {
         }
     }
 
+    private boolean canKill(int x, int y) {
+        if (Board.tiles[x][y].getOccupyingPiece() != null){
+            if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
+                    || (!Board.tiles[x][y].getOccupyingPiece().isWhite() && !isWhite())) {
+                return false;
+            } else {
+                return x < 8 && y < 8;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public void tryKill(int x, int y) {
+        if (x >= 0 && x < 8 && canKill(x, y)) {
+            JButton newButton = createFieldButton(Board.tiles[x][y]);
+            newButton.setSelected(true);
+            newButton.setIcon(new ImageIcon("src/pics/KillTarget.png"));
+            Board.tiles[x][y].getpTile().add(newButton);
+            Board.tiles[x][y].getpTile().updateUI();
+        }
+    }
+
+    private void moveLogic(int newX, int newY){
+        Tile newTile = Board.tiles[newX][newY];
+        JButton newButton = createFieldButton(newTile);
+        Board.tiles[newX][newY].getpTile().add(newButton);
+        Board.tiles[newX][newY].getpTile().updateUI();
+    }
+
     @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/RookWhite.png" : "src/pics/RookBlack.png");

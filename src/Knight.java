@@ -6,7 +6,48 @@ public class Knight extends Piece {
 
     @Override
     public void calculateNewPos() {
+        for (int i = -1; i <= 1; i += 2) {
+            //Unten
+            Tile currentTile = getPosition();
+            int newY = currentTile.getY() + 2;
+            int newX = currentTile.getX() + i;
+            moveLogic(newX, newY);
+            //Unten
+            newX = currentTile.getX() + i;
+            newY = currentTile.getY() - 2;
+            moveLogic(newX, newY);
+            //Links
+            newY = currentTile.getY() + i;
+            newX = currentTile.getX() + 2;
+            moveLogic(newX, newY);
+            //Rechts
+            newY = currentTile.getY() + i;
+            newX = currentTile.getX() - 2;
+            moveLogic(newX, newY);
+        }
+    }
 
+    private boolean canKill(int x, int y) {
+        if (Board.tiles[x][y].getOccupyingPiece() != null){
+            if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
+                    || (!Board.tiles[x][y].getOccupyingPiece().isWhite() && !isWhite())) {
+                return false;
+            } else {
+                return x < 8 && y < 8;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public void tryKill(int x, int y) {
+        if (x >= 0 && x < 8 && canKill(x, y)) {
+            JButton newButton = createFieldButton(Board.tiles[x][y]);
+            newButton.setSelected(true);
+            newButton.setIcon(new ImageIcon("src/pics/KillTarget.png"));
+            Board.tiles[x][y].getpTile().add(newButton);
+            Board.tiles[x][y].getpTile().updateUI();
+        }
     }
 
     private void moveLogic(int newX, int newY){

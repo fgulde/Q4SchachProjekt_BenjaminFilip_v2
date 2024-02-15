@@ -54,13 +54,6 @@ public class Pawn extends Piece {
     /* Methode zum Überprüfen, ob die gewünschte Position innerhalb des Spielbretts liegt, ob das neue Tile bereits
      besetzt ist.
      */
-    private boolean isValidMove(int x, int y) {
-        if (Board.tiles[x][y].getOccupyingPiece() != null) {
-            return false;
-        } else {
-            return x < 8 && y < 8;
-        }
-    }
 
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
