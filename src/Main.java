@@ -6,25 +6,17 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        String startSfx = "src/sfx/start.wav";
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
-            Clip clip = AudioSystem.getClip();
-            clip.open(ais);
-            clip.setFramePosition(0);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-            throw new RuntimeException(ex);
-        }
-
         // Neues Schachbrett, wobei createBoard() und initializeBoard() durch Konstruktor ausgeführt werden
         Board board = new Board();
+
+        Board.setStatus(GameStatus.WHITEMOVE);
+        Board.lStatus.setText(Board.status.toString());
 
         // Neuer JFrame
         JFrame fBoard = new JFrame();
 
         // Fügt Schachbrett dem JFrame hinzu, Schachbrett enthält alle GUI-Elemente in Form von "chessboard"-JPanel
-        fBoard.add(board.getChessBoard());
+        fBoard.add(board.getGUI());
 
         // Stellt sicher, dass das Programm beendet wird, wenn das Fenster geschlossen wird
         fBoard.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -104,8 +104,8 @@ public class Pawn extends Piece {
                 throw new RuntimeException(ex);
             }
             SwingUtilities.invokeLater(() -> {
-                String[] options = {"Queen", "Rook", "Bishop", "Knight"};
-                int choice = JOptionPane.showOptionDialog(null, "Choose a piece to promote to:", "Promotion",
+                String[] options = {"Dame", "Turm", "Läufer", "Springer"};
+                int choice = JOptionPane.showOptionDialog(null, "Wählen Sie eine Figur für die Umwandlung:", "Umwandlung",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);
 
                 String promotionSfx = "src/sfx/promotion.wav";

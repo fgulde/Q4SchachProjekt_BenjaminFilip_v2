@@ -1,4 +1,3 @@
-import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -6,9 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class Piece {
     private boolean white;
@@ -143,6 +140,14 @@ public abstract class Piece {
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY());
             }
+            if (Board.status.equals(GameStatus.WHITEMOVE)) {
+                Board.changeButtonsEnabled(true);
+                Board.setStatus(GameStatus.BLACKMOVE);
+            } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
+                Board.changeButtonsEnabled(false);
+                Board.setStatus(GameStatus.WHITEMOVE);
+            }
+            Board.lStatus.setText(Board.status.toString());
             removeFieldButtons();
         }
     }
