@@ -1,8 +1,11 @@
+import javax.sound.sampled.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public abstract class Piece {
     private boolean white;
@@ -97,6 +100,16 @@ public abstract class Piece {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String clickSfx = "src/sfx/click.wav";
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(clickSfx));
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                clip.setFramePosition(0);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                throw new RuntimeException(ex);
+            }
             // Hier können Sie die Logik für das Klicken auf das Feld implementieren
             removeFieldButtons();
             piece.calculateNewPos();
@@ -113,10 +126,28 @@ public abstract class Piece {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String moveSfx = "src/sfx/move.wav";
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(moveSfx));
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                clip.setFramePosition(0);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                throw new RuntimeException(ex);
+            }
+
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY());
-
             }
+            if (Board.status.equals(GameStatus.WHITEMOVE)) {
+                Board.changeButtonsEnabled(true);
+                Board.setStatus(GameStatus.BLACKMOVE);
+            } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
+                Board.changeButtonsEnabled(false);
+                Board.setStatus(GameStatus.WHITEMOVE);
+            }
+            Board.lStatus.setText(Board.status.toString());
             removeFieldButtons();
         }
     }

@@ -1,16 +1,22 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
         // Neues Schachbrett, wobei createBoard() und initializeBoard() durch Konstruktor ausgeführt werden
         Board board = new Board();
 
+        Board.setStatus(GameStatus.WHITEMOVE);
+        Board.lStatus.setText(Board.status.toString());
+
         // Neuer JFrame
         JFrame fBoard = new JFrame();
 
         // Fügt Schachbrett dem JFrame hinzu, Schachbrett enthält alle GUI-Elemente in Form von "chessboard"-JPanel
-        fBoard.add(board.getChessBoard());
+        fBoard.add(board.getGUI());
 
         // Stellt sicher, dass das Programm beendet wird, wenn das Fenster geschlossen wird
         fBoard.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -29,6 +35,8 @@ public class Main {
 
         //Nennt das Fenster "Schachbrett"
         fBoard.setTitle("Schachbrett");
+
+        fBoard.setIconImage(new ImageIcon("src/pics/Chess.png").getImage());
 
         // Verhindert, dass das Fenster skaliert werden kann, da sonst das Schachbrett verzerrt werden würde
         fBoard.setResizable(false);
