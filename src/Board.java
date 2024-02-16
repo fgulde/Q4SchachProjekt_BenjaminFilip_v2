@@ -87,6 +87,7 @@ public class Board {
         JButton button = piece.createPieceButton();
         if (black){
             button.setEnabled(false);
+            button.setDisabledIcon(tiles[tile.getX()][tile.getY()].getOccupyingPiece().getIconPath());
         }
         tile.getpTile().add(button);
     }
@@ -160,15 +161,15 @@ public class Board {
     public static void changeButtonsEnabled(boolean white){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
+                JButton button = Board.tiles[x][y].getButton();
                 if (tiles[x][y].getOccupyingPiece() != null){
-                    if (tiles[x][y].getOccupyingPiece().isWhite() && white) {
-                        tiles[x][y].getpTile().getComponent(0).setEnabled(false);
-                    } else if (tiles[x][y].getOccupyingPiece().isWhite() && !white) {
-                        tiles[x][y].getpTile().getComponent(0).setEnabled(true);
-                    } else if (!tiles[x][y].getOccupyingPiece().isWhite() && !white) {
-                        tiles[x][y].getpTile().getComponent(0).setEnabled(false);
-                    } else if (!tiles[x][y].getOccupyingPiece().isWhite() && white) {
-                        tiles[x][y].getpTile().getComponent(0).setEnabled(true);
+                    if (tiles[x][y].getOccupyingPiece().isWhite() && white ||
+                            !tiles[x][y].getOccupyingPiece().isWhite() && !white) {
+                        button.setEnabled(false);
+                        button.setDisabledIcon(tiles[x][y].getOccupyingPiece().getIconPath());
+                    } else if (tiles[x][y].getOccupyingPiece().isWhite() && !white ||
+                            !tiles[x][y].getOccupyingPiece().isWhite() && white) {
+                        button.setEnabled(true);
                     }
                 }
             }
