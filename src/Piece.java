@@ -110,7 +110,6 @@ public abstract class Piece {
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                 throw new RuntimeException(ex);
             }
-            // Hier können Sie die Logik für das Klicken auf das Feld implementieren
             removeFieldButtons();
             piece.calculateNewPos();
         }

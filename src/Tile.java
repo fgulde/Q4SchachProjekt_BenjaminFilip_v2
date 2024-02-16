@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.awt.*;
+
 
 /*
 Mit der Tile Klasse werden die Felder des Schachbretts erstellt.
@@ -65,6 +67,18 @@ public class Tile {
     public void setOccupied(boolean occ){
         this.occupied = occupied;
     }
+    public JButton getButton() {
+        for (Component component : pTile.getComponents()) {
+            if (component instanceof JButton) {
+                return (JButton) component;
+            }
+        }
+        return null;  // Wenn kein Button gefunden wurde
+    }
 
+    public boolean hasButton() {
+        return getButton() != null;
+    }
 
 }
+
