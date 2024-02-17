@@ -196,6 +196,7 @@ public class Board {
         public NewGameButtonListener(){}
         @Override
         public void actionPerformed(ActionEvent e) {
+            Piece.FieldActionListener.NotifySound();
             if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher, dass du ein neues Spiel" +
                 " starten willst? \n(Hinweis: Das aktuelle Spiel geht dabei verloren.)",
                 "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -224,6 +225,7 @@ public class Board {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
+            Piece.FieldActionListener.NotifySound();
             if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher dass du aufgeben willst?",
                     "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
