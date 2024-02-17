@@ -135,6 +135,11 @@ public class Pawn extends Piece {
                 getPosition().getpTile().remove(0);
                 getPosition().getpTile().add(button);
                 getPosition().getpTile().updateUI();
+                Board.tiles[getPosition().getX()][getPosition().getY()].getButton().setEnabled(false);
+                Board.tiles[getPosition().getX()][getPosition().getY()].getButton()
+                        .setDisabledIcon(Board.tiles[getPosition().getX()][getPosition().getY()]
+                                .getOccupyingPiece().getIconPath());
+                getPosition().getpTile().updateUI();
             });
     }
 
