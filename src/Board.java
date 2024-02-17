@@ -2,6 +2,8 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -29,9 +31,11 @@ public class Board {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         GUI.add(tools, BorderLayout.PAGE_START);
-        tools.add(newGame); // TO-DO - "Spiel zurücksetzen" implementieren
+        tools.add(newGame);
+        newGame.addActionListener(new NewGameButtonListener());
         tools.addSeparator();
         tools.add(giveUp);
+        giveUp.addActionListener(new GiveUpButtonListener());
         tools.addSeparator();
         tools.add(new JLabel("Status:"));
         tools.addSeparator();
@@ -82,7 +86,7 @@ public class Board {
         return chessBoard;
     }
 
-    private void createAndAddPiece(Piece piece, Tile tile, boolean black) {
+    private static void createAndAddPiece(Piece piece, Tile tile, boolean black) {
         tile.setOccupyingPiece(piece);
         JButton button = piece.createPieceButton();
         if (black){
@@ -94,7 +98,7 @@ public class Board {
 
 
     // Füllt das Schachbrett mit den Anfangspositionen aller Figuren
-    public void initializeBoard() {
+    public static void initializeBoard() {
         String startSfx = "src/sfx/start.wav";
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
@@ -171,6 +175,74 @@ public class Board {
                             !tiles[x][y].getOccupyingPiece().isWhite() && white) {
                         button.setEnabled(true);
                     }
+                }
+            }
+        }
+    }
+
+    public static void disableAllButtons(){
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                JButton button = Board.tiles[x][y].getButton();
+                if (tiles[x][y].getOccupyingPiece() != null){
+                    button.setEnabled(false);
+                    button.setDisabledIcon(tiles[x][y].getOccupyingPiece().getIconPath());
+                }
+            }
+        }
+    }
+
+    public static class NewGameButtonListener implements ActionListener{
+        public NewGameButtonListener(){}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Piece.FieldActionListener.NotifySound();
+            if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher, dass du ein neues Spiel" +
+                " starten willst? \n(Hinweis: Das aktuelle Spiel geht dabei verloren.)",
+                "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
+                        //Alles entfernen
+                        for (int i = 0; i < 8; i++) {
+                            for (int j = 0; j < 8; j++) {
+                                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                                    Board.tiles[i][j].getpTile().remove(k);
+                                    Board.tiles[i][j].setOccupyingPiece(null);
+                                    Board.tiles[i][j].getpTile().updateUI();
+                                }
+                            }
+                        }
+                        //Alles neu erstellen
+                        setStatus(GameStatus.WHITEMOVE);
+                        Board.lStatus.setText(Board.status.toString());
+                        initializeBoard();
+            }
+        }
+    }
+
+    public static class GiveUpButtonListener implements ActionListener{
+        public GiveUpButtonListener(){
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Piece.FieldActionListener.NotifySound();
+            if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher dass du aufgeben willst?",
+                    "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
+                if (Board.status.equals(GameStatus.WHITEMOVE)){
+                    Board.setStatus(GameStatus.BLACKWIN);
+                    Board.lStatus.setText(Board.status.toString());
+                    Board.disableAllButtons();
+                    Piece.FieldActionListener.NotifySound();
+                    JOptionPane.showMessageDialog(null, "Schwarz hat das Spiel gewonnen!",
+                            "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/BlackWin.png"));
+                } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
+                    Board.setStatus(GameStatus.WHITEWIN);
+                    Board.lStatus.setText(Board.status.toString());
+                    Board.disableAllButtons();
+                    Piece.FieldActionListener.NotifySound();
+                    JOptionPane.showMessageDialog(null, "Weiß hat das Spiel gewonnen!",
+                            "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/WhiteWin.png"));
                 }
             }
         }
