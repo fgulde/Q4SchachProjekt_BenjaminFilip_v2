@@ -176,6 +176,18 @@ public class Board {
         }
     }
 
+    public static void disableAllButtons(){
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                JButton button = Board.tiles[x][y].getButton();
+                if (tiles[x][y].getOccupyingPiece() != null){
+                    button.setEnabled(false);
+                    button.setDisabledIcon(tiles[x][y].getOccupyingPiece().getIconPath());
+                }
+            }
+        }
+    }
+
     public static Tile[][] getTiles() {
         return tiles;
     }

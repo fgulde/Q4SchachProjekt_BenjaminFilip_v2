@@ -93,17 +93,8 @@ public class Pawn extends Piece {
     public void promote() {
         boolean color = isWhite();
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
-            String notifySfx = "src/sfx/notify.wav";
-            try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(notifySfx));
-                Clip clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.setFramePosition(0);
-                clip.start();
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                throw new RuntimeException(ex);
-            }
-            SwingUtilities.invokeLater(() -> {
+        FieldActionListener.NotifySound();
+        SwingUtilities.invokeLater(() -> {
                 String[] options = {"Dame", "Turm", "Läufer", "Springer"};
                 int choice = JOptionPane.showOptionDialog(null, "Wählen Sie eine Figur für die Umwandlung:", "Umwandlung",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);

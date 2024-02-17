@@ -1,6 +1,5 @@
 import javax.sound.sampled.*;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,11 +34,19 @@ public abstract class Piece {
 
     // Move method
     public void move(int newX, int newY){
-        // Bewege den Bauer auf das neue Feld
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
         Tile newTile = Board.tiles[newX][newY];
         getPosition().setOccupied(false);
+        if (Board.tiles[newTile.getX()][newTile.getY()].getOccupyingPiece() != null &&
+                Board.tiles[newTile.getX()][newTile.getY()].getOccupyingPiece().getClass().equals(King.class)){
+            if (Board.tiles[newTile.getX()][newTile.getY()].getOccupyingPiece().isWhite()){
+                Board.setStatus(GameStatus.BLACKWIN);
+            } else {
+                Board.setStatus(GameStatus.WHITEWIN);
+            }
+            Board.lStatus.setText(Board.status.toString());
+        }
         newTile.setOccupied(true);
         newTile.setOccupyingPiece(this);
         JButton pwButton = createPieceButton();
@@ -146,8 +153,31 @@ public abstract class Piece {
             } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
                 Board.changeButtonsEnabled(false);
                 Board.setStatus(GameStatus.WHITEMOVE);
+            } else if (Board.status.equals(GameStatus.WHITEWIN)) {
+                Board.disableAllButtons();
+                NotifySound();
+                JOptionPane.showMessageDialog(null, "Weiß hat das Spiel gewonnen!", "Spielausgang",
+                        JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/WhiteWin.png"));
+            } else if (Board.status.equals(GameStatus.BLACKWIN)) {
+                Board.disableAllButtons();
+                NotifySound();
+                JOptionPane.showMessageDialog(null, "Schwarz hat das Spiel gewonnen!", "Spielausgang",
+                        JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/BlackWin.png"));
             }
             Board.lStatus.setText(Board.status.toString());
+        }
+
+        public static void NotifySound() {
+            String notifySfx = "src/sfx/notify.wav";
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(notifySfx));
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                clip.setFramePosition(0);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
