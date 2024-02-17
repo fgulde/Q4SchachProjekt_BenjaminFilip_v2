@@ -91,10 +91,11 @@ public class Pawn extends Piece {
 
     // Methode zum Umwandeln eines Bauern
     public void promote() {
-        boolean color = isWhite();
+        if (Board.status.equals(GameStatus.WHITEWIN) || Board.status.equals(GameStatus.BLACKWIN)){} else {
+            boolean color = isWhite();
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
-        FieldActionListener.NotifySound();
-        SwingUtilities.invokeLater(() -> {
+            FieldActionListener.NotifySound();
+            SwingUtilities.invokeLater(() -> {
                 String[] options = {"Dame", "Turm", "Läufer", "Springer"};
                 int choice = JOptionPane.showOptionDialog(null, "Wählen Sie eine Figur für die Umwandlung:", "Umwandlung",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);
@@ -132,6 +133,7 @@ public class Pawn extends Piece {
                                 .getOccupyingPiece().getIconPath());
                 getPosition().getpTile().updateUI();
             });
+        }
     }
 
 
