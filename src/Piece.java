@@ -138,6 +138,7 @@ public abstract class Piece {
 
             if (piece.getPosition().isOccupied()) {
                 piece.move(newTile.getX(), newTile.getY());
+                removeFieldButtons();
             }
             if (Board.status.equals(GameStatus.WHITEMOVE)) {
                 Board.changeButtonsEnabled(true);
@@ -147,7 +148,6 @@ public abstract class Piece {
                 Board.setStatus(GameStatus.WHITEMOVE);
             }
             Board.lStatus.setText(Board.status.toString());
-            removeFieldButtons();
         }
     }
 
