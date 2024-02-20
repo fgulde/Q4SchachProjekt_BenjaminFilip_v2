@@ -55,12 +55,29 @@ public abstract class Piece {
         position.setOccupied(false);
         position.setOccupyingPiece(null);
         setPosition(newTile);
-        moved = true;
+
 
         // Überprüfe, ob der Bauer die gegnerische Grundreihe erreicht hat
         checkPromotion();
-    }
 
+        moved = true;
+    }
+    private static void checkCastleR(Piece piece) {
+        if (piece instanceof King) {
+            King king = (King) piece;
+            // Find the rook position for castling
+            Tile rookTile = Board.tiles[7][piece.getPosition().getY()];
+            king.castle(rookTile);
+        }
+    }
+    private static void checkCastleL(Piece piece) {
+        if (piece instanceof King) {
+            King king = (King) piece;
+            // Find the rook position for castling
+            Tile rookTile = Board.tiles[0][piece.getPosition().getY()];
+            king.castle(rookTile);
+        }
+    }
     // Methode zur Überprüfung, ob der Bauer die gegnerische Grundreihe erreicht hat
     private void checkPromotion() {
         if (this instanceof Pawn) {
@@ -93,6 +110,17 @@ public abstract class Piece {
         return button;
     }
 
+    public JButton createCastleButton(Tile position) {
+        JButton button = new JButton();
+        button.addActionListener(new FieldActionListener(position, this));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setIcon(new ImageIcon("src/pics/Castling.png"));
+        button.setSelected(true);
+        return button;
+    }
+
     // Abstract method to get the icon path
     protected abstract ImageIcon getIconPath();
 
@@ -119,6 +147,9 @@ public abstract class Piece {
             }
             removeFieldButtons();
             piece.calculateNewPos();
+            // Check for castling move
+            checkCastleR(piece);
+            checkCastleL(piece);
         }
     }
     public static class FieldActionListener implements ActionListener {

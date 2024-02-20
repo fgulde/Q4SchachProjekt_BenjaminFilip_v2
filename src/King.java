@@ -6,6 +6,9 @@ public class King extends Piece {
 
     @Override
     public void calculateNewPos() {
+        if (!isMoved()){
+
+        }
         //Oben
         Tile currentTile = getPosition();
         int newX = currentTile.getX();
@@ -73,6 +76,67 @@ public class King extends Piece {
         } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
             tryKill(newX,newY);
         }
+    }
+
+    public void castle(Tile rookTile) {
+        // Check conditions for castling
+        if (!isMoved() && !rookTile.getOccupyingPiece().isMoved()) {
+            // Check if there are no pieces between the king and the rook
+            for (int direction = -1; direction <= 1; direction =+ 2) {
+                int startCol = getPosition().getX() + direction;
+                int destCol = getPosition().getX() + 2*direction;
+                int endCol = rookTile.getX();
+                boolean piecesBetween = false;
+                for (int col = startCol; col != endCol; col += direction) {
+                    if (Board.tiles[col][getPosition().getY()].getOccupyingPiece() != null) {
+                        piecesBetween = true;
+                        break;
+                    }
+                }
+                if (!piecesBetween) {
+                    // Check if the king is not in check and the squares are not under attack
+                    if (!isInCheck() && !isInCheckAfterMove(startCol, endCol)) {
+                        // Display the castling option button
+                        JButton castleButton = createCastleButton(Board.tiles[destCol][getPosition().getY()]);
+                        if (Board.tiles[destCol][getPosition().getY()].getpTile().getComponentCount() > 0) {
+                            Board.tiles[destCol][getPosition().getY()].getpTile().remove(0);
+                        }
+                        Board.tiles[destCol][getPosition().getY()].getpTile().add(castleButton);
+                        Board.tiles[destCol][getPosition().getY()].getpTile().updateUI();
+                    }
+                }
+            }
+            }
+    }
+
+    public boolean isInCheck() {
+        // Check if the king is attacked by any opponent's piece
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (Board.tiles[x][y].getOccupyingPiece() != null
+                        && Board.tiles[x][y].getOccupyingPiece().isWhite() != isWhite()) {
+                    if (Board.tiles[x][y].getOccupyingPiece().isValidMove(getPosition().getX(), getPosition().getY())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isInCheckAfterMove(int startX, int endX) {
+        // Simulate the move and check if the king is in check
+        Piece originalPiece = Board.tiles[endX][getPosition().getY()].getOccupyingPiece();
+        Board.tiles[endX][getPosition().getY()].setOccupyingPiece(this);
+        Board.tiles[startX][getPosition().getY()].setOccupyingPiece(null);
+
+        boolean inCheck = isInCheck();
+
+        // Undo the move
+        Board.tiles[startX][getPosition().getY()].setOccupyingPiece(this);
+        Board.tiles[endX][getPosition().getY()].setOccupyingPiece(originalPiece);
+
+        return inCheck;
     }
 
     @Override

@@ -119,10 +119,10 @@ public class Board {
             Pawn blackPawn = new Pawn(false, false, tiles[x][1]);
             createAndAddPiece(blackPawn, tiles[x][1], true);
         }
-        Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
-        createAndAddPiece(whiteBishop1, tiles[2][7], false);
-        Bishop whiteBishop2 = new Bishop(true,false,tiles[5][7]);
-        createAndAddPiece(whiteBishop2, tiles[5][7], false);
+//        Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
+//        createAndAddPiece(whiteBishop1, tiles[2][7], false);
+//        Bishop whiteBishop2 = new Bishop(true,false,tiles[5][7]);
+//        createAndAddPiece(whiteBishop2, tiles[5][7], false);
         Bishop blackBishop1 = new Bishop(false,false,tiles[2][0]);
         createAndAddPiece(blackBishop1, tiles[2][0], true);
         Bishop blackBishop2 = new Bishop(false,false,tiles[5][0]);
@@ -139,18 +139,18 @@ public class Board {
         createAndAddPiece(blackRook2, tiles[7][0], true);
 
 
-        Knight whiteKnight1 = new Knight(true,false,tiles[1][7]);
-        createAndAddPiece(whiteKnight1, tiles[1][7], false);
-        Knight whiteKnight2 = new Knight(true,false,tiles[6][7]);
-        createAndAddPiece(whiteKnight2, tiles[6][7], false);
+//        Knight whiteKnight1 = new Knight(true,false,tiles[1][7]);
+//        createAndAddPiece(whiteKnight1, tiles[1][7], false);
+//        Knight whiteKnight2 = new Knight(true,false,tiles[6][7]);
+//        createAndAddPiece(whiteKnight2, tiles[6][7], false);
         Knight blackKnight1 = new Knight(false,false,tiles[1][0]);
         createAndAddPiece(blackKnight1, tiles[1][0], true);
         Knight blackKnight2 = new Knight(false,false,tiles[6][0]);
         createAndAddPiece(blackKnight2, tiles[6][0], true);
 
 
-        Queen whiteQueen = new Queen(true, false, tiles[3][7]);
-        createAndAddPiece(whiteQueen, tiles[3][7], false);
+//        Queen whiteQueen = new Queen(true, false, tiles[3][7]);
+//        createAndAddPiece(whiteQueen, tiles[3][7], false);
         Queen blackQueen = new Queen(false, false, tiles[3][0]);
         createAndAddPiece(blackQueen, tiles[3][0], true);
 
