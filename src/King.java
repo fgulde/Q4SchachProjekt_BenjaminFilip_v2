@@ -91,7 +91,8 @@ public class King extends Piece {
                     if (Board.tiles[col][getPosition().getY()].getOccupyingPiece() != null) {
                         piecesBetween = true;
                         break;
-                    }
+                        }
+                     pTile += direction;
                 }
                 if (!piecesBetween) {
                     // Check if the king is not in check and the squares are not under attack
