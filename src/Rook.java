@@ -84,7 +84,7 @@ public class Rook extends Piece {
         }
     }
 
-    private void moveLogic(int newX, int newY){
+    public void moveLogic(int newX, int newY){
         Tile newTile = Board.tiles[newX][newY];
         JButton newButton = createFieldButton(newTile);
         Board.tiles[newX][newY].getpTile().add(newButton);
