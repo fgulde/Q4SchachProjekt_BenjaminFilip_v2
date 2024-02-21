@@ -82,13 +82,14 @@ public class King extends Piece {
         // Check conditions for castling
         if (!isMoved() && !rookTile.getOccupyingPiece().isMoved()) {
             // Check if there are no pieces between the king and the rook
-            for (int direction = -1; direction <= 1; direction =+ 2) {
-                int startCol = getPosition().getX() + direction;
-                int destCol = getPosition().getX() + 2*direction;
-                int endCol = rookTile.getX();
+            for (int direction = -1; direction <= 1; direction += 2) {
+                int startTile = getPosition().getX() + direction; // Is used for Rook Endpos
+                int destTile = getPosition().getX() + 2*direction;
                 boolean piecesBetween = false;
-                for (int col = startCol; col != endCol; col += direction) {
-                    if (Board.tiles[col][getPosition().getY()].getOccupyingPiece() != null) {
+                int pTile = startTile;
+                // Check for Pieces between Rook and King; if true, break
+                while (pTile != rookTile.getX()){
+                     if (Board.tiles[pTile][getPosition().getY()].getOccupyingPiece() != null) {
                         piecesBetween = true;
                         break;
                         }
@@ -96,14 +97,14 @@ public class King extends Piece {
                 }
                 if (!piecesBetween) {
                     // Check if the king is not in check and the squares are not under attack
-                    if (!isInCheck() && !isInCheckAfterMove(startCol, endCol)) {
+                    if (!isInCheck()/* && !isInCheckAfterMove(getPosition().getX(), destTile)*/) {
                         // Display the castling option button
-                        JButton castleButton = createCastleButton(Board.tiles[destCol][getPosition().getY()]);
-                        if (Board.tiles[destCol][getPosition().getY()].getpTile().getComponentCount() > 0) {
-                            Board.tiles[destCol][getPosition().getY()].getpTile().remove(0);
+                        JButton castleButton = createCastleButton(Board.tiles[destTile][getPosition().getY()]);
+                        if (Board.tiles[destTile][getPosition().getY()].getpTile().getComponentCount() > 0) {
+                            Board.tiles[destTile][getPosition().getY()].getpTile().remove(0);
                         }
-                        Board.tiles[destCol][getPosition().getY()].getpTile().add(castleButton);
-                        Board.tiles[destCol][getPosition().getY()].getpTile().updateUI();
+                        Board.tiles[destTile][getPosition().getY()].getpTile().add(castleButton);
+                        Board.tiles[destTile][getPosition().getY()].getpTile().updateUI();
                     }
                 }
             }
@@ -125,7 +126,7 @@ public class King extends Piece {
         return false;
     }
 
-    public boolean isInCheckAfterMove(int startX, int endX) {
+    /*public boolean isInCheckAfterMove(int startX, int endX) {
         // Simulate the move and check if the king is in check
         Piece originalPiece = Board.tiles[endX][getPosition().getY()].getOccupyingPiece();
         Board.tiles[endX][getPosition().getY()].setOccupyingPiece(this);
@@ -138,7 +139,7 @@ public class King extends Piece {
         Board.tiles[endX][getPosition().getY()].setOccupyingPiece(originalPiece);
 
         return inCheck;
-    }
+    }*/
 
     @Override
     protected ImageIcon getIconPath() {
