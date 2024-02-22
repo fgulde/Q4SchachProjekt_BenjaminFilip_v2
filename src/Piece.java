@@ -62,20 +62,34 @@ public abstract class Piece {
 
         moved = true;
     }
+
+    public static void pullRook(Tile destTile){
+        if (7 - destTile.getX() < 3) {
+            Rook rook = (Rook) Board.tiles[7][destTile.getY()].getOccupyingPiece();
+            rook.move(destTile.getX(), destTile.getY());
+        } else if (0 < destTile.getX()) {
+            Rook rook = (Rook) Board.tiles[0][destTile.getY()].getOccupyingPiece();
+            rook.move(destTile.getX(), destTile.getY());
+        }
+    }
+
     private static void checkCastleR(Piece piece) {
         if (piece instanceof King) {
             King king = (King) piece;
             // Find the rook position for castling
             Tile rookTile = Board.tiles[7][piece.getPosition().getY()];
+            Tile destTile = Board.tiles[5][piece.getPosition().getY()];
             king.castle(rookTile);
         }
     }
     private static void checkCastleL(Piece piece) {
         if (piece instanceof King) {
             King king = (King) piece;
-            // Find the rook position for castling
+            //Find the rook position for castling
             Tile rookTile = Board.tiles[0][piece.getPosition().getY()];
+            Tile destTile = Board.tiles[3][piece.getPosition().getY()];
             king.castle(rookTile);
+
         }
     }
     // Methode zur Überprüfung, ob der Bauer die gegnerische Grundreihe erreicht hat
@@ -175,6 +189,16 @@ public abstract class Piece {
             }
 
             if (piece.getPosition().isOccupied()) {
+                if (piece instanceof King && ((King) piece).isCastled() && !piece.isMoved()){
+                    if (newTile.getX() > piece.getPosition().getX()) {
+                        Tile destTile = Board.tiles[newTile.getX() - 1][newTile.getY()];
+                        pullRook(destTile);
+                    } else if (newTile.getX() < piece.getPosition().getX()) {
+                        Tile destTile = Board.tiles[newTile.getX() + 1][newTile.getY()];
+                        pullRook(destTile);
+                    }
+
+                }
                 piece.move(newTile.getX(), newTile.getY());
                 removeFieldButtons();
             }

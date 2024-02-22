@@ -4,6 +4,8 @@ public class King extends Piece {
         super(isWhite, killed, position);
     }
 
+    public boolean castled = false;
+
     @Override
     public void calculateNewPos() {
         if (!isMoved()){
@@ -113,6 +115,7 @@ public class King extends Piece {
                         }
                         Board.tiles[destTile][getPosition().getY()].getpTile().add(castleButton);
                         Board.tiles[destTile][getPosition().getY()].getpTile().updateUI();
+                        setCastled(true);
                     }
                 }
             }
@@ -133,6 +136,7 @@ public class King extends Piece {
         }
         return false;
     }
+
 
     /*public boolean isInCheckAfterMove(int startX, int endX) {
         // Simulate the move and check if the king is in check
