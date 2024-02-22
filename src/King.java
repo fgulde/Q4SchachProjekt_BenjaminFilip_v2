@@ -78,6 +78,14 @@ public class King extends Piece {
         }
     }
 
+    public boolean isCastled() {
+        return castled;
+    }
+
+    public void setCastled(boolean castled) {
+        this.castled = castled;
+    }
+
     public void castle(Tile rookTile) {
         // Check conditions for castling
         if (!isMoved() && !rookTile.getOccupyingPiece().isMoved()) {

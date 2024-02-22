@@ -10,8 +10,9 @@ import java.io.IOException;
 
 public class Board {
     public JPanel GUI;
+    public JPanel innerGUI; // Die GUI mit den Zahlen und Buchstaben am Rand
     public static Tile[][] tiles = new Tile[8][8]; // Die Felder werden in einem 8x8-Array gespeichert
-    public JPanel chessBoard; // Das Schachbrett mit allen GUI-Elementen. Wird in Main dem JFrame hinzugefügt.
+    public JPanel chessBoard; // Das Schachbrett
     public JButton newGame = new JButton("Neues Spiel"); // Button zum Resetten des Spiels
     public JButton giveUp = new JButton("Aufgeben"); // Button um anderen Spieler gewinnen zu lassen
     public static GameStatus status = GameStatus.READY;
@@ -25,6 +26,29 @@ public class Board {
     public void createBoard() {
         chessBoard = new JPanel(new GridLayout(8, 8)); // Erstellt ein Swing JPanel mit Grid-Layout
         chessBoard.setBorder(new LineBorder(Color.BLACK)); // Setzt Randfarbe der GUI
+
+        innerGUI = new JPanel(new BorderLayout());
+        // Letter-Row
+        JPanel letterRow = new JPanel(new GridLayout(1, 8));
+        innerGUI.add(letterRow, BorderLayout.NORTH);
+        // Number-Row
+        JPanel numberRow = new JPanel(new GridLayout(8, 1));
+        innerGUI.add(numberRow, BorderLayout.WEST);
+        // Schachbrett
+        innerGUI.add(chessBoard, BorderLayout.CENTER);
+
+        // Erstellt Letter-Row
+        for (int c = 97; c < 105; c++) {
+            JLabel lLetter = new JLabel((char) c + "  ", SwingConstants.CENTER);
+            lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
+            letterRow.add(lLetter);
+        }
+        // Erstellt Number-Row
+        for (int i = 8; i > 0; i--) {
+            JLabel lNumber = new JLabel(" " + String.valueOf(i) + " ");
+            lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
+            numberRow.add(lNumber);
+        }
 
         // Fügt GUI um Schachbrett herum hinzu
         GUI = new JPanel(new BorderLayout(2, 2));
@@ -40,7 +64,7 @@ public class Board {
         tools.add(new JLabel("Status:"));
         tools.addSeparator();
         tools.add(lStatus);
-        GUI.add(chessBoard);
+        GUI.add(innerGUI);
 
         /*
         Erstellt einzeln alle Felder mit zugehörigem Button. Die äußere for-Schleife fährt von oben nach unten, die
