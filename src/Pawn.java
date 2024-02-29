@@ -7,6 +7,8 @@ import java.io.IOException;
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
 
+    public boolean enPassant = false;
+
     public Pawn(boolean isWhite, boolean killed, Tile position) {
         super(isWhite, killed, position);
     }
@@ -28,6 +30,7 @@ public class Pawn extends Piece {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
                 Board.tiles[newX][newY].getpTile().updateUI();
+                newButton.setDefaultCapable(true);
             }
             if (isValidMove(newX, newY1)) {
                 JButton newButton1 = createFieldButton(newTile1);
@@ -136,7 +139,12 @@ public class Pawn extends Piece {
         }
     }
 
+    /*public void activateEnPassant(Tile tile)
+    {
+        if (white){
 
+        }
+    }*/
 
     @Override
     protected ImageIcon getIconPath () {

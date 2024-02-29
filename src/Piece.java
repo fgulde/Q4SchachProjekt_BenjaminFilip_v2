@@ -34,6 +34,11 @@ public abstract class Piece {
 
     // Move method
     public void move(int newX, int newY){
+        if (Board.tiles[newX][newY].getButton().isDefaultCapable()){
+            if(Board.tiles[newX][newY].getOccupyingPiece() instanceof Pawn){
+
+            }
+        }
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
         Tile newTile = Board.tiles[newX][newY];
