@@ -11,7 +11,7 @@ public abstract class Piece {
     private boolean killed;
     public Tile position;
     private boolean moved = false;
-
+    public Piece[] tempPieces;
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
         this.killed = killed;
@@ -147,6 +147,7 @@ public abstract class Piece {
 
     // Abstract method to get the icon path
     protected abstract ImageIcon getIconPath();
+    protected abstract ImageIcon getKillIconPath(boolean white);
 
     // ActionListener for field clicks
     public static class PieceActionListener implements ActionListener {
@@ -274,7 +275,6 @@ public abstract class Piece {
             } else return true;
         } else return false;
     }
-
 }
 
 

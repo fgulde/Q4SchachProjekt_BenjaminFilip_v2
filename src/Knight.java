@@ -42,9 +42,11 @@ public class Knight extends Piece {
 
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
+            Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
+            Board.tiles[x][y].getpTile().remove(0);
             JButton newButton = createFieldButton(Board.tiles[x][y]);
             newButton.setSelected(true);
-            newButton.setIcon(new ImageIcon("src/pics/KillTarget.png"));
+            newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
             Board.tiles[x][y].getpTile().add(newButton);
             Board.tiles[x][y].getpTile().updateUI();
         }
@@ -63,5 +65,9 @@ public class Knight extends Piece {
     @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KnightWhite.png" : "src/pics/KnightBlack.png");
+    }
+    @Override
+    protected ImageIcon getKillIconPath(boolean white){
+        return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/KinghtWhiteKill.png" : "src/pics/KillTargetIcons/KnightBlackKill.png");
     }
 }
