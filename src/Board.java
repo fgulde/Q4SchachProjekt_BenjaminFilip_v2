@@ -31,7 +31,7 @@ public class Board {
         GridBagConstraints gc = new GridBagConstraints();
         //Space-Panel
         JPanel space = new JPanel(new GridLayout(1, 1, 100, 0));
-        JLabel lspace = new JLabel("T", SwingConstants.CENTER);
+        JLabel lspace = new JLabel("", SwingConstants.CENTER);
         lspace.setFont(new Font("Arial", Font.PLAIN, 20));
         space.add(lspace);
         gc.gridx = 0;
@@ -39,7 +39,7 @@ public class Board {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         innerGUI.add(space, gc);
         // Letter-Row
-        JPanel letterRow = new JPanel(new GridLayout(1, 8, 50, 0));
+        JPanel letterRow = new JPanel(new GridLayout(1, 8, 57, 0));
         gc.gridx = 1;
         gc.anchor = GridBagConstraints.PAGE_START;
         innerGUI.add(letterRow, gc);
@@ -52,7 +52,7 @@ public class Board {
 
         // Erstellt Letter-Row
         for (int c = 97; c < 105; c++) {
-            JLabel lLetter = new JLabel((char) c + "  ", SwingConstants.CENTER);
+            JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
             lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
             letterRow.add(lLetter);
         }
