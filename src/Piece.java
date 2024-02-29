@@ -34,10 +34,14 @@ public abstract class Piece {
 
     // Move method
     public void move(int newX, int newY){
-        if (Board.tiles[newX][newY].getButton().isDefaultCapable()){
-            if(Board.tiles[newX][newY].getOccupyingPiece() instanceof Pawn){
-
-            }
+        if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn){
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(true);
+        } else if(Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn){
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(false);
         }
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
