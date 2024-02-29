@@ -27,15 +27,28 @@ public class Board {
         chessBoard = new JPanel(new GridLayout(8, 8)); // Erstellt ein Swing JPanel mit Grid-Layout
         chessBoard.setBorder(new LineBorder(Color.BLACK)); // Setzt Randfarbe der GUI
 
-        innerGUI = new JPanel(new BorderLayout());
+        innerGUI = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        //Space-Panel
+        JPanel space = new JPanel(new GridLayout(1, 1, 100, 0));
+        JLabel lspace = new JLabel("T", SwingConstants.CENTER);
+        lspace.setFont(new Font("Arial", Font.PLAIN, 20));
+        space.add(lspace);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        innerGUI.add(space, gc);
         // Letter-Row
-        JPanel letterRow = new JPanel(new GridLayout(1, 8));
-        innerGUI.add(letterRow, BorderLayout.NORTH);
+        JPanel letterRow = new JPanel(new GridLayout(1, 8, 50, 0));
+        gc.gridx = 1;
+        gc.anchor = GridBagConstraints.PAGE_START;
+        innerGUI.add(letterRow, gc);
         // Number-Row
-        JPanel numberRow = new JPanel(new GridLayout(8, 1));
-        innerGUI.add(numberRow, BorderLayout.WEST);
-        // Schachbrett
-        innerGUI.add(chessBoard, BorderLayout.CENTER);
+        JPanel numberRow = new JPanel(new GridLayout(8, 1, 0, 50));
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.anchor = GridBagConstraints.LINE_START;
+        innerGUI.add(numberRow, gc);
 
         // Erstellt Letter-Row
         for (int c = 97; c < 105; c++) {
@@ -49,6 +62,11 @@ public class Board {
             lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
             numberRow.add(lNumber);
         }
+
+        // Schachbrett
+        gc.gridx = 1;
+        gc.anchor = GridBagConstraints.CENTER;
+        innerGUI.add(chessBoard, gc);
 
         // Fügt GUI um Schachbrett herum hinzu
         GUI = new JPanel(new BorderLayout(2, 2));
