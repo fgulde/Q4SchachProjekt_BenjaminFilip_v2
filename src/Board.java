@@ -50,13 +50,13 @@ public class Board {
         gc.anchor = GridBagConstraints.LINE_START;
         innerGUI.add(numberRow, gc);
 
-        // Erstellt Letter-Row
+        // Erstellt Letter-Row 1
         for (int c = 97; c < 105; c++) {
             JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
             lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
             letterRow.add(lLetter);
         }
-        // Erstellt Number-Row
+        // Erstellt Number-Row 1
         for (int i = 8; i > 0; i--) {
             JLabel lNumber = new JLabel(" " + String.valueOf(i) + " ");
             lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -67,6 +67,32 @@ public class Board {
         gc.gridx = 1;
         gc.anchor = GridBagConstraints.CENTER;
         innerGUI.add(chessBoard, gc);
+
+        // Letter-Row
+        JPanel letterRow1 = new JPanel(new GridLayout(1, 8, 57, 0));
+        gc.gridx = 1;
+        gc.gridy = 2;
+        gc.anchor = GridBagConstraints.PAGE_END;
+        innerGUI.add(letterRow1, gc);
+        // Number-Row
+        JPanel numberRow1 = new JPanel(new GridLayout(8, 1, 0, 50));
+        gc.gridx = 2;
+        gc.gridy = 1;
+        gc.anchor = GridBagConstraints.LINE_END;
+        innerGUI.add(numberRow1, gc);
+
+        // Erstellt Letter-Row 2
+        for (int c = 97; c < 105; c++) {
+            JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
+            lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
+            letterRow1.add(lLetter);
+        }
+        // Erstellt Number-Row 2
+        for (int i = 8; i > 0; i--) {
+            JLabel lNumber = new JLabel(" " + String.valueOf(i) + " ");
+            lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
+            numberRow1.add(lNumber);
+        }
 
         // Fügt GUI um Schachbrett herum hinzu
         GUI = new JPanel(new BorderLayout(2, 2));
