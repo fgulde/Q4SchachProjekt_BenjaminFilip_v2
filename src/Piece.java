@@ -32,6 +32,7 @@ public abstract class Piece {
 
     public abstract void calculateNewPos();
 
+
     // Move method
     public void move(int newX, int newY){
         if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&

@@ -137,22 +137,6 @@ public class King extends Piece {
         return false;
     }
 
-
-    /*public boolean isInCheckAfterMove(int startX, int endX) {
-        // Simulate the move and check if the king is in check
-        Piece originalPiece = Board.tiles[endX][getPosition().getY()].getOccupyingPiece();
-        Board.tiles[endX][getPosition().getY()].setOccupyingPiece(this);
-        Board.tiles[startX][getPosition().getY()].setOccupyingPiece(null);
-
-        boolean inCheck = isInCheck();
-
-        // Undo the move
-        Board.tiles[startX][getPosition().getY()].setOccupyingPiece(this);
-        Board.tiles[endX][getPosition().getY()].setOccupyingPiece(originalPiece);
-
-        return inCheck;
-    }*/
-
     @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KingWhite.png" : "src/pics/KingBlack.png");
