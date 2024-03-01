@@ -35,6 +35,9 @@ public abstract class Piece {
 
     // Move method
     public void move(int newX, int newY){
+        Board.txtA.append(Board.vCounter + ". " + (isWhite() ? "Weiß, " : "Schwarz, ") + getClassName() + ": "
+                + (char)(97+position.getX()) + (8-position.getY()) + " -> " + (char)(97+newX) + (8-newY) + "\n");
+        Board.vCounter++;
         if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
                 Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn){
             Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
@@ -120,6 +123,7 @@ public abstract class Piece {
         button.setIcon(getIconPath());
         button.setOpaque(false);
         button.setContentAreaFilled(false);
+        button.setToolTipText(getClassName());
         return button;
     }
 
@@ -131,6 +135,7 @@ public abstract class Piece {
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Target.png"));
         button.setSelected(true);
+        button.setToolTipText("Bewege die Figur hierher.");
         return button;
     }
 
@@ -142,6 +147,7 @@ public abstract class Piece {
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Castling.png"));
         button.setSelected(true);
+        button.setToolTipText("Rochade ausführen.");
         return button;
     }
 
@@ -263,6 +269,8 @@ public abstract class Piece {
             }
         }
     }
+
+    public abstract String getClassName(); // Für ToolTips
 
     public boolean isMoved() {
         return moved;

@@ -63,6 +63,11 @@ public class Knight extends Piece {
     }
 
     @Override
+    public String getClassName() {
+        return "Springer";
+    }
+
+    @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KnightWhite.png" : "src/pics/KnightBlack.png");
     }
