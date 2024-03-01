@@ -78,7 +78,6 @@ public class Pawn extends Piece {
     }
 
     public void tryKill(int x, int y) {
-
         for (int i = -1; i <= 1; i += 2) {
             int newX = x + i;
 
@@ -107,9 +106,12 @@ public class Pawn extends Piece {
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
             FieldActionListener.NotifySound();
             SwingUtilities.invokeLater(() -> {
-                String[] options = {"Dame", "Turm", "Läufer", "Springer"};
+                ImageIcon[] choices = {new ImageIcon(new ImageIcon("src/pics/QueenWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon("src/pics/RookWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon("src/pics/BishopWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon("src/pics/KnightWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT))};
                 int choice = JOptionPane.showOptionDialog(null, "Wählen Sie eine Figur für die Umwandlung:", "Umwandlung",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), options, options[0]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), choices, choices[0]);
 
                 String promotionSfx = "src/sfx/promotion.wav";
                 try {

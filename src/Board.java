@@ -15,6 +15,7 @@ public class Board {
     public JPanel chessBoard; // Das Schachbrett
     public JButton newGame = new JButton("Neues Spiel"); // Button zum Resetten des Spiels
     public JButton giveUp = new JButton("Aufgeben"); // Button um anderen Spieler gewinnen zu lassen
+    public JButton about = new JButton("Info"); // Button um anderen Spieler gewinnen zu lassen
     public static GameStatus status = GameStatus.READY;
     public static JLabel lStatus = new JLabel(status.toString());
 
@@ -94,20 +95,28 @@ public class Board {
             numberRow1.add(lNumber);
         }
 
-        // Fügt GUI um Schachbrett herum hinzu
+        // Fügt Toolbar hinzu
         GUI = new JPanel(new BorderLayout(2, 2));
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         GUI.add(tools, BorderLayout.PAGE_START);
+
         tools.add(newGame);
         newGame.addActionListener(new NewGameButtonListener());
+
         tools.addSeparator();
         tools.add(giveUp);
         giveUp.addActionListener(new GiveUpButtonListener());
+
         tools.addSeparator();
         tools.add(new JLabel("Status:"));
         tools.addSeparator();
         tools.add(lStatus);
+
+        tools.addSeparator(new Dimension(15, 5));
+        tools.add(about);
+        about.addActionListener(new AboutButtonListener());
+
         GUI.add(innerGUI);
 
         /*
@@ -313,6 +322,19 @@ public class Board {
                             "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/WhiteWin.png"));
                 }
             }
+        }
+    }
+
+    public static class AboutButtonListener implements ActionListener{
+        public AboutButtonListener(){}
+        @Override
+        public void actionPerformed(ActionEvent e){
+            Piece.FieldActionListener.NotifySound();
+            JOptionPane.showMessageDialog(null, "Dieses Schachspiel ist ein Gemeinschaftsprojekt\n" +
+                            "von Benjamin Dembinski und Filip Gulde.\n\nEs wurde für den Informatikunterricht des 4. Semesters\n" +
+                            "an der kath. Theresienschule Berlin programmiert.",
+                    "Über das Projekt", JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("src/pics/chess.png")
+                            .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)));
         }
     }
 
