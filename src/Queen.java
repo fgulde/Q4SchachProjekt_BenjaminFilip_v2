@@ -146,6 +146,11 @@ public class Queen extends Piece {
     }
 
     @Override
+    public String getClassName() {
+        return "Dame";
+    }
+
+    @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/QueenWhite.png" : "src/pics/QueenBlack.png");
     }

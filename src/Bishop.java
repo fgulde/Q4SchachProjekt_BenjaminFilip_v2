@@ -95,6 +95,10 @@ public class Bishop extends Piece {
         Board.tiles[newX][newY].getpTile().updateUI();
     }
 
+    @Override
+    public String getClassName() {
+        return "Läufer";
+    }
 
     @Override
     protected ImageIcon getIconPath() {

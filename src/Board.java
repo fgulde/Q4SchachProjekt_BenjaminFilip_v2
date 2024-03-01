@@ -16,6 +16,8 @@ public class Board {
     public JButton newGame = new JButton("Neues Spiel"); // Button zum Resetten des Spiels
     public JButton giveUp = new JButton("Aufgeben"); // Button um anderen Spieler gewinnen zu lassen
     public JButton about = new JButton("Info"); // Button um anderen Spieler gewinnen zu lassen
+    public static JTextArea txtA = new JTextArea(35, 20); // Verlaufsfeld
+    public static int vCounter = 1;
     public static GameStatus status = GameStatus.READY;
     public static JLabel lStatus = new JLabel(status.toString());
 
@@ -69,13 +71,13 @@ public class Board {
         gc.anchor = GridBagConstraints.CENTER;
         innerGUI.add(chessBoard, gc);
 
-        // Letter-Row
+        // Letter-Row 2
         JPanel letterRow1 = new JPanel(new GridLayout(1, 8, 57, 0));
         gc.gridx = 1;
         gc.gridy = 2;
         gc.anchor = GridBagConstraints.PAGE_END;
         innerGUI.add(letterRow1, gc);
-        // Number-Row
+        // Number-Row 2
         JPanel numberRow1 = new JPanel(new GridLayout(8, 1, 0, 50));
         gc.gridx = 2;
         gc.gridy = 1;
@@ -90,9 +92,41 @@ public class Board {
         }
         // Erstellt Number-Row 2
         for (int i = 8; i > 0; i--) {
-            JLabel lNumber = new JLabel(" " + String.valueOf(i) + " ");
+            JLabel lNumber = new JLabel(" " + String.valueOf(i) + "       ");
             lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
             numberRow1.add(lNumber);
+        }
+
+        // Verlaufsfeld
+        txtA.setEditable(false);
+
+        JScrollPane scr = new JScrollPane(txtA);
+
+        JToolBar vLabelBar = new JToolBar();
+        vLabelBar.setFloatable(false);
+        JLabel vLabel = new JLabel("Verlauf:");
+        vLabelBar.add(vLabel);
+        vLabelBar.setToolTipText("");
+
+        JPanel pVerlauf = new JPanel(new BorderLayout(2, 2));
+        pVerlauf.add(vLabelBar, BorderLayout.NORTH);
+        pVerlauf.add(scr, BorderLayout.CENTER);
+
+        gc.gridheight = 2;
+        gc.gridx = 4;
+        gc.gridy = 0;
+        innerGUI.add(pVerlauf, gc);
+
+        //Lücke neben Verlaufsfeld
+        JPanel spaceRow = new JPanel(new GridLayout(8, 1, 0, 50));
+        gc.gridx = 5;
+        gc.gridy = 0;
+        gc.anchor = GridBagConstraints.LINE_END;
+        innerGUI.add(spaceRow, gc);
+        for (int i = 8; i > 0; i--) {
+            JLabel lSpace1 = new JLabel("     ");
+            lSpace1.setFont(new Font("Arial", Font.PLAIN, 20));
+            spaceRow.add(lSpace1);
         }
 
         // Fügt Toolbar hinzu
@@ -103,10 +137,12 @@ public class Board {
 
         tools.add(newGame);
         newGame.addActionListener(new NewGameButtonListener());
+        newGame.setToolTipText("Setzt das Spiel auf den Startzustand zurück.");
 
         tools.addSeparator();
         tools.add(giveUp);
         giveUp.addActionListener(new GiveUpButtonListener());
+        giveUp.setToolTipText("Lässt den Gegner gewinnen.");
 
         tools.addSeparator();
         tools.add(new JLabel("Status:"));
@@ -116,6 +152,7 @@ public class Board {
         tools.addSeparator(new Dimension(15, 5));
         tools.add(about);
         about.addActionListener(new AboutButtonListener());
+        about.setToolTipText("Informationen über das Projekt.");
 
         GUI.add(innerGUI);
 

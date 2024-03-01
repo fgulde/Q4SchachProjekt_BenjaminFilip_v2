@@ -9,8 +9,6 @@ public class Pawn extends Piece {
 
     public boolean enPassant = false;
 
-
-
     public Pawn(boolean isWhite, boolean killed, Tile position) {
         super(isWhite, killed, position);
     }
@@ -60,10 +58,6 @@ public class Pawn extends Piece {
         }
     }
 
-    /* Methode zum Überprüfen, ob die gewünschte Position innerhalb des Spielbretts liegt, ob das neue Tile bereits
-     besetzt ist.
-     */
-
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
             if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
@@ -80,7 +74,6 @@ public class Pawn extends Piece {
     public void tryKill(int x, int y) {
         for (int i = -1; i <= 1; i += 2) {
             int newX = x + i;
-
             if (newX >= 0 && newX < 8 && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
                 Piece[] newTempPieces = new Piece[tempPieces.length + 1];
@@ -101,18 +94,25 @@ public class Pawn extends Piece {
 
     // Methode zum Umwandeln eines Bauern
     public void promote() {
-        if (Board.status.equals(GameStatus.WHITEWIN) || Board.status.equals(GameStatus.BLACKWIN)){} else {
+        if (!Board.status.equals(GameStatus.WHITEWIN) && !Board.status.equals(GameStatus.BLACKWIN)) {
             boolean color = isWhite();
             // Der Bauer erreicht die gegnerische Grundreihe (y = 0 für Weiß, y = 7 für Schwarz)
+            // Soundeffekt
             FieldActionListener.NotifySound();
+            // Auswahl-UI
             SwingUtilities.invokeLater(() -> {
-                ImageIcon[] choices = {new ImageIcon(new ImageIcon("src/pics/QueenWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
-                        new ImageIcon(new ImageIcon("src/pics/RookWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
-                        new ImageIcon(new ImageIcon("src/pics/BishopWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
-                        new ImageIcon(new ImageIcon("src/pics/KnightWhite.png").getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT))};
+                ImageIcon[] choices = {new ImageIcon(new ImageIcon(isWhite() ? "src/pics/QueenWhite.png" : "src/pics/QueenBlack.png")
+                        .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon(isWhite() ? "src/pics/RookWhite.png" : "src/pics/RookBlack.png")
+                                .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon(isWhite() ? "src/pics/BishopWhite.png" : "src/pics/BishopBlack.png")
+                                .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)),
+                        new ImageIcon(new ImageIcon(isWhite() ? "src/pics/KnightWhite.png" : "src/pics/KnightBlack.png")
+                                .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT))};
                 int choice = JOptionPane.showOptionDialog(null, "Wählen Sie eine Figur für die Umwandlung:", "Umwandlung",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon("src/pics/Promotion.png"), choices, choices[0]);
 
+                // Soundeffekt
                 String promotionSfx = "src/sfx/promotion.wav";
                 try {
                     AudioInputStream ais = AudioSystem.getAudioInputStream(new File(promotionSfx));
@@ -124,17 +124,18 @@ public class Pawn extends Piece {
                     throw new RuntimeException(ex);
                 }
 
+                // Ausgewähltes Piece erzeugen
                 Piece promotedPiece = switch (choice) {
                     case 0 -> new Queen(color, false, getPosition());
                     case 1 -> new Rook(color, false, getPosition());
                     case 2 -> new Bishop(color, false, getPosition());
                     case 3 -> new Knight(color, false, getPosition());
                     default ->
-                        // Default to Queen if no valid choice is made
+                        // Standardauswahl ist Königin, wenn kein anderes Piece ausgewählt wurde
                             new Queen(color, false, getPosition());
                 };
 
-                // Ersetze den Bauern durch die gewählte Figur
+                // Ersetze den Pawn durch die gewählte Figur
                 Board.getTiles()[getPosition().getX()][getPosition().getY()].setOccupyingPiece(promotedPiece);
                 JButton button = promotedPiece.createPieceButton();
                 getPosition().getpTile().remove(0);
@@ -155,6 +156,11 @@ public class Pawn extends Piece {
 
     public void setEnPassant(boolean enPassant) {
         this.enPassant = enPassant;
+    }
+
+    @Override
+    public String getClassName() {
+        return "Bauer";
     }
 
     @Override

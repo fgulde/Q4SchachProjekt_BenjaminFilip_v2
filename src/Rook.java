@@ -94,6 +94,11 @@ public class Rook extends Piece {
     }
 
     @Override
+    public String getClassName() {
+        return "Turm";
+    }
+
+    @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/RookWhite.png" : "src/pics/RookBlack.png");
     }

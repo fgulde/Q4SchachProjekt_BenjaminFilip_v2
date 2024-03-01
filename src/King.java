@@ -140,6 +140,11 @@ public class King extends Piece {
     }
 
     @Override
+    public String getClassName() {
+        return "König";
+    }
+
+    @Override
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KingWhite.png" : "src/pics/KingBlack.png");
     }
