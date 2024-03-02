@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.util.Arrays;
+
 public class Knight extends Piece {
     public Knight(boolean isWhite, boolean killed, Tile position) {
         super(isWhite, killed, position);
@@ -43,10 +45,14 @@ public class Knight extends Piece {
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
-            Board.tiles[x][y].getpTile().remove(0);
+            tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
+            tempPieces[tempPieces.length - 1] = tempPiece;
+
             JButton newButton = createFieldButton(Board.tiles[x][y]);
             newButton.setSelected(true);
             newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+
+            Board.tiles[x][y].getpTile().remove(0);
             Board.tiles[x][y].getpTile().add(newButton);
             Board.tiles[x][y].getpTile().updateUI();
         }
@@ -73,6 +79,6 @@ public class Knight extends Piece {
     }
     @Override
     protected ImageIcon getKillIconPath(boolean white){
-        return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/KinghtWhiteKill.png" : "src/pics/KillTargetIcons/KnightBlackKill.png");
+        return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/KnightWhiteKill.png" : "src/pics/KillTargetIcons/KnightBlackKill.png");
     }
 }

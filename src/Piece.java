@@ -11,11 +11,12 @@ public abstract class Piece {
     private boolean killed;
     public Tile position;
     private boolean moved = false;
-    public Piece[] tempPieces;
+    public static Piece[] tempPieces;
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
         this.killed = killed;
         this.position = position;
+        this.tempPieces = new Piece[0];  // Füge diese Zeile hinzu, um das Array zu initialisieren.
     }
 
     public Tile getPosition() {
@@ -38,15 +39,16 @@ public abstract class Piece {
         Board.txtA.append(Board.vCounter + ". " + (isWhite() ? "Weiß, " : "Schwarz, ") + getClassName() + ": "
                 + (char)(97+position.getX()) + (8-position.getY()) + " -> " + (char)(97+newX) + (8-newY) + "\n");
         Board.vCounter++;
-        if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn){
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
-            pawn.setEnPassant(true);
-        } else if(Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn){
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
-            pawn.setEnPassant(false);
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++){
+                if (Board.tiles[i][j].getOccupyingPiece() instanceof Pawn){
+                    Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+                    pawn.setEnPassant(false);
+                }
+            }
         }
+
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI();
         Tile newTile = Board.tiles[newX][newY];
@@ -69,7 +71,15 @@ public abstract class Piece {
         position.setOccupyingPiece(null);
         setPosition(newTile);
 
-
+        if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(true);
+        } else if (Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(false);
+        }
         // Überprüfe, ob der Bauer die gegnerische Grundreihe erreicht hat
         checkPromotion();
 
@@ -176,7 +186,12 @@ public abstract class Piece {
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                 throw new RuntimeException(ex);
             }
+            resetTempPieces(piece.getPosition());
             removeFieldButtons();
+            if (piece instanceof Pawn) {
+                Pawn pawn = (Pawn) piece;
+                pawn.checkEnPassant(piece.getPosition().getX(), piece.getPosition().getY());
+            }
             piece.calculateNewPos();
             // Check for castling move
             checkCastleR(piece);
@@ -217,6 +232,7 @@ public abstract class Piece {
 
                 }
                 piece.move(newTile.getX(), newTile.getY());
+                resetTempPieces(piece.getPosition());
                 removeFieldButtons();
             }
             if (Board.status.equals(GameStatus.WHITEMOVE)) {
@@ -262,12 +278,34 @@ public abstract class Piece {
                         if(((JButton) c).isSelected()){
                             Board.tiles[i][j].getpTile().remove(k);
                             Board.tiles[i][j].getpTile().updateUI();
+
                         }
 
                     }
                 }
             }
         }
+    }
+    public static void resetTempPieces(Tile destination) {
+        for (Piece tempPiece : tempPieces) {
+            if (tempPiece != null) {
+
+                Tile originalTile = tempPiece.getPosition();
+
+                if (!(originalTile.getpTile() == destination.getpTile())) {
+
+                    originalTile.setOccupyingPiece(tempPiece);
+
+                    JButton button = tempPiece.createPieceButton();
+                    originalTile.getpTile().remove(0);
+                    originalTile.getpTile().add(button);
+                    originalTile.getpTile().updateUI();
+                }
+            }
+        }
+
+        // Nach dem Zurücksetzen leere das tempPieces-Array
+        tempPieces = new Piece[0];
     }
 
     public abstract String getClassName(); // Für ToolTips
@@ -284,5 +322,3 @@ public abstract class Piece {
         } else return false;
     }
 }
-
-

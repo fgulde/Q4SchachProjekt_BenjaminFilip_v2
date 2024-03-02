@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.util.Arrays;
+
 public class King extends Piece {
     public King(boolean isWhite, boolean killed, Tile position) {
         super(isWhite, killed, position);
@@ -62,10 +64,14 @@ public class King extends Piece {
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
-            Board.tiles[x][y].getpTile().remove(0);
+            tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
+            tempPieces[tempPieces.length - 1] = tempPiece;
+
             JButton newButton = createFieldButton(Board.tiles[x][y]);
             newButton.setSelected(true);
             newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+
+            Board.tiles[x][y].getpTile().remove(0);
             Board.tiles[x][y].getpTile().add(newButton);
             Board.tiles[x][y].getpTile().updateUI();
         }
