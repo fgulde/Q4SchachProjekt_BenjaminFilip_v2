@@ -91,8 +91,28 @@ public class Pawn extends Piece {
         }
     }
 
+    public void checkEnPassant(int x, int y) {
+        for (int i : new int[]{-1, 1}) {
+            int newX = x + i;
+            int newY = y + (isWhite() ? -1 : 1);
 
+            if (isValidMove(newX, newY) && canKill(newX, y)) {
+                Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
+                System.out.println("yey");
+                if (tempPiece instanceof Pawn && ((Pawn) tempPiece).isEnPassant()) {
+                    // En Passant capture
 
+                    JButton newButton = createFieldButton(Board.tiles[newX][newY]);
+                    newButton.setSelected(true);
+                    newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+
+                    Board.tiles[newX][newY].getpTile().add(newButton);
+                    Board.tiles[newX][newY].getpTile().updateUI();
+
+                }
+            }
+        }
+    }
 
     // Methode zum Umwandeln eines Bauern
     public void promote() {
