@@ -75,12 +75,12 @@ public class Pawn extends Piece {
     public void tryKill(int x, int y) {
         for (int i : new int[]{-1, 1}) {
             int newX = x + i;
-            if (canKill(newX, y)) {
+            if (newX < 8 && newX >= 0 && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
                 tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
                 tempPieces[tempPieces.length - 1] = tempPiece;
 
-                JButton newButton = createFieldButton(Board.tiles[newX][y]);
+                JButton newButton = createKillButton(Board.tiles[newX][y]);
                 newButton.setSelected(true);
                 newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
 
@@ -98,11 +98,10 @@ public class Pawn extends Piece {
 
             if (isValidMove(newX, newY) && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                System.out.println("yey");
                 if (tempPiece instanceof Pawn && ((Pawn) tempPiece).isEnPassant()) {
                     // En Passant capture
 
-                    JButton newButton = createFieldButton(Board.tiles[newX][newY]);
+                    JButton newButton = createEnPassantButton(Board.tiles[newX][newY]);
                     newButton.setSelected(true);
                     newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
 

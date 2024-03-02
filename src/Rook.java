@@ -82,7 +82,7 @@ public class Rook extends Piece {
             tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
             tempPieces[tempPieces.length - 1] = tempPiece;
 
-            JButton newButton = createFieldButton(Board.tiles[x][y]);
+            JButton newButton = createKillButton(Board.tiles[x][y]);
             newButton.setSelected(true);
             newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
 

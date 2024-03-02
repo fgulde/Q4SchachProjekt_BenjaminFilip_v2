@@ -43,10 +43,22 @@ public abstract class Piece {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++){
                 if (Board.tiles[i][j].getOccupyingPiece() instanceof Pawn){
-                    Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
-                    pawn.setEnPassant(false);
+                    Pawn pawn = (Pawn) Board.tiles[i][j].getOccupyingPiece();
+                    if (pawn.isWhite() == Board.tiles[position.getX()][position.getY()].getOccupyingPiece().isWhite()){
+                        pawn.setEnPassant(false);
+                    }
                 }
             }
+        }
+
+        if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(true);
+        } else if (Board.tiles[newX][newY].getButton().isDefaultCapable() &&
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
+            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+            pawn.setEnPassant(false);
         }
 
         Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
@@ -71,15 +83,7 @@ public abstract class Piece {
         position.setOccupyingPiece(null);
         setPosition(newTile);
 
-        if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
-            pawn.setEnPassant(true);
-        } else if (Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
-            pawn.setEnPassant(false);
-        }
+
         // Überprüfe, ob der Bauer die gegnerische Grundreihe erreicht hat
         checkPromotion();
 
@@ -149,6 +153,18 @@ public abstract class Piece {
         return button;
     }
 
+    public JButton createKillButton(Tile position) {
+        JButton button = new JButton();
+        button.addActionListener(new FieldActionListener(position, this));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setIcon(new ImageIcon("src/pics/KillTarget.png"));
+        button.setSelected(true);
+        button.setToolTipText("Schlage diese Figur.");
+        return button;
+    }
+
     public JButton createCastleButton(Tile position) {
         JButton button = new JButton();
         button.addActionListener(new FieldActionListener(position, this));
@@ -158,6 +174,18 @@ public abstract class Piece {
         button.setIcon(new ImageIcon("src/pics/Castling.png"));
         button.setSelected(true);
         button.setToolTipText("Rochade ausführen.");
+        return button;
+    }
+
+    public JButton createEnPassantButton(Tile position) {
+        JButton button = new JButton();
+        button.addActionListener(new FieldActionListener(position, this));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setSelected(true);
+        button.setToolTipText("EnPassant ausführen.");
+        button.setFocusPainted(false);
         return button;
     }
 
@@ -221,7 +249,7 @@ public abstract class Piece {
             }
 
             if (piece.getPosition().isOccupied()) {
-                if (piece instanceof King && ((King) piece).isCastled() && !piece.isMoved()){
+                if (piece instanceof King && ((King) piece).isCastled() && !piece.isMoved()) {
                     if (newTile.getX() > piece.getPosition().getX()) {
                         Tile destTile = Board.tiles[newTile.getX() - 1][newTile.getY()];
                         pullRook(destTile);
@@ -231,9 +259,18 @@ public abstract class Piece {
                     }
 
                 }
+
+                if (!newTile.getButton().isFocusPainted()) {
+                    int y = newTile.getY() + (piece.isWhite() ? 1 : -1);
+                    Board.tiles[newTile.getX()][y].getpTile().remove(0);
+                    Board.tiles[newTile.getX()][y].setOccupyingPiece(null);
+                    Board.tiles[newTile.getX()][y].getpTile().updateUI();
+                }
+
                 piece.move(newTile.getX(), newTile.getY());
                 resetTempPieces(piece.getPosition());
                 removeFieldButtons();
+
             }
             if (Board.status.equals(GameStatus.WHITEMOVE)) {
                 Board.changeButtonsEnabled(true);
