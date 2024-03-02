@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
@@ -72,23 +73,24 @@ public class Pawn extends Piece {
     }
 
     public void tryKill(int x, int y) {
-        for (int i = -1; i <= 1; i += 2) {
+        for (int i : new int[]{-1, 1}) {
             int newX = x + i;
-            if (newX >= 0 && newX < 8 && canKill(newX, y)) {
+            if (canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                Piece[] newTempPieces = new Piece[tempPieces.length + 1];
-                System.arraycopy(tempPieces, 0, newTempPieces, 0, tempPieces.length);
-                newTempPieces[tempPieces.length] = tempPiece;
-                tempPieces = newTempPieces;
-                Board.tiles[newX][y].getpTile().remove(0);
+                tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
+                tempPieces[tempPieces.length - 1] = tempPiece;
+
                 JButton newButton = createFieldButton(Board.tiles[newX][y]);
                 newButton.setSelected(true);
                 newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+
+                Board.tiles[newX][y].getpTile().remove(0);
                 Board.tiles[newX][y].getpTile().add(newButton);
                 Board.tiles[newX][y].getpTile().updateUI();
             }
         }
     }
+
 
 
 

@@ -11,11 +11,12 @@ public abstract class Piece {
     private boolean killed;
     public Tile position;
     private boolean moved = false;
-    public Piece[] tempPieces;
+    public static Piece[] tempPieces;
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
         this.killed = killed;
         this.position = position;
+        this.tempPieces = new Piece[0];  // Füge diese Zeile hinzu, um das Array zu initialisieren.
     }
 
     public Tile getPosition() {
@@ -176,6 +177,7 @@ public abstract class Piece {
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                 throw new RuntimeException(ex);
             }
+            resetTempPieces(piece.getPosition());
             removeFieldButtons();
             piece.calculateNewPos();
             // Check for castling move
@@ -217,6 +219,7 @@ public abstract class Piece {
 
                 }
                 piece.move(newTile.getX(), newTile.getY());
+                resetTempPieces(piece.getPosition());
                 removeFieldButtons();
             }
             if (Board.status.equals(GameStatus.WHITEMOVE)) {
@@ -262,12 +265,34 @@ public abstract class Piece {
                         if(((JButton) c).isSelected()){
                             Board.tiles[i][j].getpTile().remove(k);
                             Board.tiles[i][j].getpTile().updateUI();
+
                         }
 
                     }
                 }
             }
         }
+    }
+    public static void resetTempPieces(Tile destination) {
+        for (Piece tempPiece : tempPieces) {
+            if (tempPiece != null) {
+
+                Tile originalTile = tempPiece.getPosition();
+
+                if (!(originalTile.getpTile() == destination.getpTile())) {
+
+                    originalTile.setOccupyingPiece(tempPiece);
+
+                    JButton button = tempPiece.createPieceButton();
+                    originalTile.getpTile().remove(0);
+                    originalTile.getpTile().add(button);
+                    originalTile.getpTile().updateUI();
+                }
+            }
+        }
+
+        // Nach dem Zurücksetzen leere das tempPieces-Array
+        tempPieces = new Piece[0];
     }
 
     public abstract String getClassName(); // Für ToolTips
