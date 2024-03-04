@@ -101,6 +101,7 @@ public class Board {
         txtA.setEditable(false);
 
         JScrollPane scr = new JScrollPane(txtA);
+        scr.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         JToolBar vLabelBar = new JToolBar();
         vLabelBar.setFloatable(false);
@@ -329,6 +330,8 @@ public class Board {
                         setStatus(GameStatus.WHITEMOVE);
                         Board.lStatus.setText(Board.status.toString());
                         initializeBoard();
+                        vCounter = 1;
+                        txtA.setText("");
             }
         }
     }
@@ -368,8 +371,9 @@ public class Board {
         public void actionPerformed(ActionEvent e){
             Piece.FieldActionListener.NotifySound();
             JOptionPane.showMessageDialog(null, "Dieses Schachspiel ist ein Gemeinschaftsprojekt\n" +
-                            "von Benjamin Dembinski und Filip Gulde.\n\nEs wurde für den Informatikunterricht des 4. Semesters\n" +
-                            "an der kath. Theresienschule Berlin programmiert.",
+                            "von Benjamin Dembinski und Filip Gulde.\nEs wurde für den Informatikunterricht des 4. Semesters\n" +
+                            "an der kath. Theresienschule Berlin programmiert.\n\nMedienquellen:\n\nSchachfiguren: commons.wikimedia.org\n" +
+                            "Icons: flaticon.com\nSoundeffekte: chess.com",
                     "Über das Projekt", JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("src/pics/chess.png")
                             .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)));
         }
