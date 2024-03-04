@@ -101,7 +101,7 @@ public abstract class Piece {
     }
 
     private static void checkCastleR(Piece piece) {
-        if (piece instanceof King) {
+        if (piece instanceof King && Board.tiles[7][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
             King king = (King) piece;
             // Find the rook position for castling
             Tile rookTile = Board.tiles[7][piece.getPosition().getY()];
@@ -110,7 +110,7 @@ public abstract class Piece {
         }
     }
     private static void checkCastleL(Piece piece) {
-        if (piece instanceof King) {
+        if (piece instanceof King && Board.tiles[0][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
             King king = (King) piece;
             //Find the rook position for castling
             Tile rookTile = Board.tiles[0][piece.getPosition().getY()];

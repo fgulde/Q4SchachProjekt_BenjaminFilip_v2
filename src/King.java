@@ -114,8 +114,6 @@ public class King extends Piece {
                      pTile += direction;
                 }
                 if (!piecesBetween) {
-                    // Check if the king is not in check and the squares are not under attack
-                    if (!isInCheck()/* && !isInCheckAfterMove(getPosition().getX(), destTile)*/) {
                         // Display the castling option button
                         JButton castleButton = createCastleButton(Board.tiles[destTile][getPosition().getY()]);
                         if (Board.tiles[destTile][getPosition().getY()].getpTile().getComponentCount() > 0) {
@@ -124,25 +122,10 @@ public class King extends Piece {
                         Board.tiles[destTile][getPosition().getY()].getpTile().add(castleButton);
                         Board.tiles[destTile][getPosition().getY()].getpTile().updateUI();
                         setCastled(true);
-                    }
-                }
-            }
-            }
-    }
 
-    public boolean isInCheck() {
-        // Check if the king is attacked by any opponent's piece
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                if (Board.tiles[x][y].getOccupyingPiece() != null
-                        && Board.tiles[x][y].getOccupyingPiece().isWhite() != isWhite()) {
-                    if (Board.tiles[x][y].getOccupyingPiece().isValidMove(getPosition().getX(), getPosition().getY())) {
-                        return true;
-                    }
                 }
             }
-        }
-        return false;
+            }
     }
 
     @Override
