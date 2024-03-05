@@ -5,7 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 public class Board {
@@ -15,10 +22,12 @@ public class Board {
     public JPanel chessBoard; // Das Schachbrett
     public JButton newGame = new JButton("Neues Spiel"); // Button zum Resetten des Spiels
     public JButton giveUp = new JButton("Aufgeben"); // Button um anderen Spieler gewinnen zu lassen
+    public JButton save = new JButton("Spiel speichern");
+    public JButton load = new JButton("Spiel laden");
     public JButton about = new JButton("Info"); // Button um anderen Spieler gewinnen zu lassen
     public static JTextArea txtA = new JTextArea(35, 20); // Verlaufsfeld
     public static int vCounter = 1;
-    public static GameStatus status = GameStatus.READY;
+    public static GameStatus status = GameStatus.WHITEMOVE;
     public static JLabel lStatus = new JLabel(status.toString());
 
     public Board() {
@@ -146,11 +155,21 @@ public class Board {
         giveUp.setToolTipText("Lässt den Gegner gewinnen.");
 
         tools.addSeparator();
+        tools.add(save);
+        save.addActionListener(new SaveButtonListener());
+        save.setToolTipText("Speichere den aktuellen Spielstand als Textdatei.");
+
+        tools.addSeparator();
+        tools.add(load);
+        load.addActionListener(new LoadButtonListener());
+        load.setToolTipText("Lade einen Spielstand.");
+
+        tools.addSeparator();
         tools.add(new JLabel("Status:"));
         tools.addSeparator();
         tools.add(lStatus);
 
-        tools.addSeparator(new Dimension(15, 5));
+        tools.addSeparator(new Dimension(355, 5));
         tools.add(about);
         about.addActionListener(new AboutButtonListener());
         about.setToolTipText("Informationen über das Projekt.");
@@ -163,7 +182,7 @@ public class Board {
          */
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
-                JPanel pTile = new JPanel(new GridBagLayout()); // Erstellt den zugehörigen Button für das Feld
+                JPanel pTile = new JPanel(new GridBagLayout());
 
                 //pTile.setSize(64,64);
                 pTile.setName(String.valueOf(x+y));
@@ -343,23 +362,325 @@ public class Board {
         @Override
         public void actionPerformed(ActionEvent e) {
             Piece.FieldActionListener.NotifySound();
-            if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher dass du aufgeben willst?",
-                    "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+            if (Board.status.equals(GameStatus.WHITEWIN) || Board.status.equals(GameStatus.BLACKWIN)){
+                JOptionPane.showMessageDialog(null, "Du hast bereits verloren!\nStarte ein neues " +
+                                "Spiel um fortzufahren.", "Fehler", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/Warning.png"));
+            }
+            else if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher dass du aufgeben willst?",
+                "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
-                if (Board.status.equals(GameStatus.WHITEMOVE)){
-                    Board.setStatus(GameStatus.BLACKWIN);
-                    Board.lStatus.setText(Board.status.toString());
+                    if (Board.status.equals(GameStatus.WHITEMOVE)){
+                        Board.setStatus(GameStatus.BLACKWIN);
+                        Board.lStatus.setText(Board.status.toString());
+                        Board.disableAllButtons();
+                        Piece.FieldActionListener.NotifySound();
+                        JOptionPane.showMessageDialog(null, "Schwarz hat das Spiel gewonnen!",
+                                "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/BlackWin.png"));
+                    } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
+                        Board.setStatus(GameStatus.WHITEWIN);
+                        Board.lStatus.setText(Board.status.toString());
+                        Board.disableAllButtons();
+                        Piece.FieldActionListener.NotifySound();
+                        JOptionPane.showMessageDialog(null, "Weiß hat das Spiel gewonnen!",
+                                "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/WhiteWin.png"));
+                    }
+                }
+        }
+    }
+
+    public static class SaveButtonListener implements ActionListener{
+        public SaveButtonListener(){
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent a){
+            // Soundeffekt
+            Piece.FieldActionListener.NotifySound();
+
+            // Speichert den Spielstand als String durch Stringbuilder
+            StringBuilder str = new StringBuilder();
+            // Spielstatus, nächster Bereich wird durch "?" gekennzeichnet
+            str.append(status).append("?");
+            // for-Schleifen fahren das Feld ab und speichern jedes Piece
+            for (int y = 0; y < tiles.length; y++) {
+                for (int x = 0; x < tiles[y].length; x++) {
+                    // Erste zwei chars sind x- und y-Koordinate
+                    if (tiles[x][y].getOccupyingPiece() != null){
+                        str.append(x).append(y);
+                        // Art des Piece wird durch einen eindeutigen char gekennzeichnet
+                        switch (tiles[x][y].getOccupyingPiece().getClassName()){
+                            case "Läufer":
+                                str.append("L");
+                                break;
+                            case "König":
+                                str.append("K");
+                                break;
+                            case "Springer":
+                                str.append("S");
+                                break;
+                            case "Dame":
+                                str.append("D");
+                                break;
+                            case "Turm":
+                                str.append("T");
+                                break;
+                            case "Bauer":
+                                str.append("B");
+                                break;
+                        }
+                        // Attribut "white"
+                        str.append(tiles[x][y].getOccupyingPiece().isWhite() ? "1" : "0");
+                        // Attribut "moved"
+                        str.append(tiles[x][y].getOccupyingPiece().isMoved() ? "1" : "0");
+                        // Ende der Informationen über ein Piece wird durch ";" gekennzeichnet
+                        str.append(";");
+                    }
+                }
+            }
+
+            /* Nächster Bereich (Verlaufsfeldinhalt) wird durch "#" gekennzeichnet, nächster Bereich (vCounter) wird
+            durch "~" gekennzeichnet*/
+            str.append("#").append(txtA.getText()).append("~").append(vCounter);
+
+            String saveFile = str.toString();
+
+            // File-Dialog
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+
+                // Stellt sicher, dass die Datei mit .txt endet
+                String filePath = selectedFile.getAbsolutePath();
+                if (!filePath.endsWith(".txt")) {
+                    filePath += ".txt";
+                    selectedFile = new File(filePath);
+                }
+
+                try {
+                    // Schreibt den String als File
+                    PrintWriter writer = new PrintWriter(selectedFile);
+                    writer.println(saveFile);
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static class LoadButtonListener implements ActionListener{
+        public LoadButtonListener(){
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent e){
+            Piece.FieldActionListener.NotifySound();
+
+            // Lädt die Textdatei
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Wähle eine .txt Datei");
+            int result = fileChooser.showOpenDialog(null);
+            String fileContent = "";
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                String filePath = selectedFile.getAbsolutePath();
+                try {
+                    fileContent = Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                // Alles entfernen
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                            Board.tiles[i][j].getpTile().remove(k);
+                            Board.tiles[i][j].setOccupyingPiece(null);
+                            Board.tiles[i][j].getpTile().updateUI();
+                        }
+                    }
+                }
+
+                // Pieces ablesen und erstellen
+                int sStart = fileContent.indexOf('?');
+                int sEnd = fileContent.indexOf('#');
+
+                String sSubstring = fileContent.substring(sStart + 1, sEnd);
+                String[] sParts = sSubstring.split(";");
+
+                String startSfx = "src/sfx/start.wav";
+                try {
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(ais);
+                    clip.setFramePosition(0);
+                    clip.start();
+                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                // Zählt wie viele Pieces es von einer Sorte bereits gibt
+                int bishopCounter = 0;
+                int kingCounter = 0;
+                int knightCounter = 0;
+                int queenCounter = 0;
+                int rookCounter = 0;
+                int pawnCounter = 0;
+
+                // Erstellt die einzelnen Pieces
+                for (String sPart : sParts) {
+                    char cX = sPart.charAt(0);
+                    char cY = sPart.charAt(1);
+                    char cPiece = sPart.charAt(2);
+                    char cW = sPart.charAt(3);
+                    char cM = sPart.charAt(4);
+
+                    int x = cX - '0';
+                    int y = cY - '0';
+                    int cWhite = cW - '0';
+                    int cMoved = cM - '0';
+
+                    /*Der erste Switch checkt, was für ein Piece gewollt ist. Jedoch sind ein zweiter Switch sowie die
+                    Piece-Counter erforderlich, da jedes Objekt anders heißen muss.*/
+                    pSw : switch (cPiece){
+                        case 'L':
+                            switch (bishopCounter){
+                                case 0:
+                                    Bishop bishop1 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(bishop1, tiles[x][y], (cWhite == 0));
+                                    bishopCounter++;
+                                    break pSw;
+                                case 1:
+                                    Bishop bishop2 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(bishop2, tiles[x][y], (cWhite == 0));
+                                    bishopCounter++;
+                                    break pSw;
+                                case 2:
+                                    Bishop bishop3 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(bishop3, tiles[x][y], (cWhite == 0));
+                                    bishopCounter++;
+                                    break pSw;
+                                case 3:
+                                    Bishop bishop4 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(bishop4, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                        case 'K':
+                            switch (kingCounter){
+                                case 0:
+                                    King king1 = new King((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(king1, tiles[x][y], (cWhite == 0));
+                                    kingCounter++;
+                                    break pSw;
+                                case 1:
+                                    King king2 = new King((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(king2, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                        case 'S':
+                            switch (knightCounter){
+                                case 0:
+                                    Knight knight1 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(knight1, tiles[x][y], (cWhite == 0));
+                                    knightCounter++;
+                                    break pSw;
+                                case 1:
+                                    Knight knight2 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(knight2, tiles[x][y], (cWhite == 0));
+                                    knightCounter++;
+                                    break pSw;
+                                case 2:
+                                    Knight knight3 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(knight3, tiles[x][y], (cWhite == 0));
+                                    knightCounter++;
+                                    break pSw;
+                                case 3:
+                                    Knight knight4 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(knight4, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                        case 'D':
+                            switch (queenCounter){
+                                case 0:
+                                    Queen queen1 = new Queen((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(queen1, tiles[x][y], (cWhite == 0));
+                                    queenCounter++;
+                                    break pSw;
+                                case 1:
+                                    Queen queen2 = new Queen((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(queen2, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                        case 'T':
+                            switch (rookCounter){
+                                case 0:
+                                    Rook rook1 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(rook1, tiles[x][y], (cWhite == 0));
+                                    rookCounter++;
+                                    break pSw;
+                                case 1:
+                                    Rook rook2 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(rook2, tiles[x][y], (cWhite == 0));
+                                    rookCounter++;
+                                    break pSw;
+                                case 2:
+                                    Rook rook3 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(rook3, tiles[x][y], (cWhite == 0));
+                                    rookCounter++;
+                                    break pSw;
+                                case 3:
+                                    Rook rook4 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(rook4, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                        case 'B':
+                            switch (pawnCounter){
+                                case 0:
+                                    Pawn pawn1 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(pawn1, tiles[x][y], (cWhite == 0));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 1:
+                                    Pawn pawn2 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(pawn2, tiles[x][y], (cWhite == 0));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 2:
+                                    Pawn pawn3 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(pawn3, tiles[x][y], (cWhite == 0));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 3:
+                                    Pawn pawn4 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    createAndAddPiece(pawn4, tiles[x][y], (cWhite == 0));
+                                    break pSw;
+                            }
+                    }
+                }
+
+                // Lade den Verlauf
+                String afterHash = fileContent.substring(fileContent.indexOf("#") + 1);
+                String rTxtA = afterHash.substring(0, afterHash.indexOf("~"));
+                txtA.setText(rTxtA + "\n");
+
+                // Aktualisiere vCounter
+                String vcIntegerPart = fileContent.substring(fileContent.indexOf("~") + 1);
+                vCounter = Integer.parseInt(vcIntegerPart);
+
+
+                // Status ablesen und aktualisieren
+                char[] cStatus = fileContent.chars().mapToObj(i -> (char) i).takeWhile(c -> c != '?').map(String::valueOf)
+                        .collect(Collectors.joining()).toCharArray();
+                String sStatus = new String(cStatus);
+                setStatus(GameStatus.valueOf(sStatus));
+                Board.lStatus.setText(Board.status.toString());
+
+                // Status wirksam machen
+                if (status.equals(GameStatus.BLACKMOVE)){
+                    changeButtonsEnabled(true);
+                } else if (status.equals(GameStatus.WHITEWIN) || status.equals(GameStatus.BLACKWIN)) {
                     Board.disableAllButtons();
-                    Piece.FieldActionListener.NotifySound();
-                    JOptionPane.showMessageDialog(null, "Schwarz hat das Spiel gewonnen!",
-                            "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/BlackWin.png"));
-                } else if (Board.status.equals(GameStatus.BLACKMOVE)) {
-                    Board.setStatus(GameStatus.WHITEWIN);
-                    Board.lStatus.setText(Board.status.toString());
-                    Board.disableAllButtons();
-                    Piece.FieldActionListener.NotifySound();
-                    JOptionPane.showMessageDialog(null, "Weiß hat das Spiel gewonnen!",
-                            "Spielausgang", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/WhiteWin.png"));
                 }
             }
         }
@@ -372,8 +693,9 @@ public class Board {
             Piece.FieldActionListener.NotifySound();
             JOptionPane.showMessageDialog(null, "Dieses Schachspiel ist ein Gemeinschaftsprojekt\n" +
                             "von Benjamin Dembinski und Filip Gulde.\nEs wurde für den Informatikunterricht des 4. Semesters\n" +
-                            "an der kath. Theresienschule Berlin programmiert.\n\nMedienquellen:\n\nSchachfiguren: commons.wikimedia.org\n" +
-                            "Icons: flaticon.com\nSoundeffekte: chess.com",
+                            "an der kath. Theresienschule Berlin programmiert.\n\nMedienquellen" +
+                            "\n\nSchachfiguren: commons.wikimedia.org, modifiziert\n"
+                            + "Icons: flaticon.com, modifiziert\nSoundeffekte: chess.com",
                     "Über das Projekt", JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("src/pics/chess.png")
                             .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)));
         }
