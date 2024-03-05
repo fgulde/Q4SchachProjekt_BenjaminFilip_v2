@@ -173,7 +173,7 @@ public abstract class Piece {
         button.setContentAreaFilled(false);
         button.setIcon(new ImageIcon("src/pics/Castling.png"));
         button.setSelected(true);
-        button.setRolloverEnabled(true);
+        button.setRolloverEnabled(false);
         button.setToolTipText("Rochade ausführen.");
         return button;
     }
@@ -221,10 +221,19 @@ public abstract class Piece {
                 Pawn pawn = (Pawn) piece;
                 pawn.checkEnPassant(piece.getPosition().getX(), piece.getPosition().getY());
             }
+
+            if (piece.isWhite() && Board.status.equals(GameStatus.WHITEMOVE)){
+                Board.changeButtonsEnabled(false);
+            }else if (!piece.isWhite() && Board.status.equals(GameStatus.BLACKMOVE)){
+                Board.changeButtonsEnabled(true);
+            }
+
             piece.calculateNewPos();
             // Check for castling move
             checkCastleR(piece);
             checkCastleL(piece);
+
+
         }
     }
     public static class FieldActionListener implements ActionListener {
@@ -250,7 +259,7 @@ public abstract class Piece {
             }
 
             if (piece.getPosition().isOccupied()) {
-                if (piece instanceof King && ((King) piece).isCastled() && !piece.isMoved() && !newTile.getButton().isRolloverEnabled()) {
+                if (piece instanceof King && ((King) piece).isCastled() && !newTile.getButton().isRolloverEnabled() && !piece.isMoved()) {
                     if (newTile.getX() > piece.getPosition().getX()) {
                         Tile destTile = Board.tiles[newTile.getX() - 1][newTile.getY()];
                         pullRook(destTile);
@@ -359,4 +368,8 @@ public abstract class Piece {
             } else return true;
         } else return false;
     }
+    public void statusChange(){
+
+    }
 }
+
