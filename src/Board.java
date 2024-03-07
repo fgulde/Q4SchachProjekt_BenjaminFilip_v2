@@ -11,38 +11,40 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 public class Board {
-    public JPanel GUI;
-    public JPanel innerGUI; // Die GUI mit den Zahlen und Buchstaben am Rand
+    public JPanel GUI; // Die gesamte GUI mit Toolbar
+    public JPanel innerGUI; // Die GUI mit Zahlen und Buchstaben am Rand und Verlaufsfeld
     public static Tile[][] tiles = new Tile[8][8]; // Die Felder werden in einem 8x8-Array gespeichert
     public JPanel chessBoard; // Das Schachbrett
-    public JButton newGame = new JButton("Neues Spiel"); // Button zum Resetten des Spiels
-    public JButton giveUp = new JButton("Aufgeben"); // Button um anderen Spieler gewinnen zu lassen
+    // Buttons
+    public JButton newGame = new JButton("Neues Spiel");
+    public JButton giveUp = new JButton("Aufgeben");
     public JButton save = new JButton("Spiel speichern");
     public JButton load = new JButton("Spiel laden");
-    public JButton about = new JButton("Info"); // Button um anderen Spieler gewinnen zu lassen
+    public JButton about = new JButton("Info");
     public static JTextArea txtA = new JTextArea(35, 20); // Verlaufsfeld
-    public static int vCounter = 1;
-    public static GameStatus status = GameStatus.WHITEMOVE;
-    public static JLabel lStatus = new JLabel(status.toString());
+    public static int vCounter = 1; // Zähler vom Spielzug
+    public static GameStatus status = GameStatus.WHITEMOVE; // Status (für Spiellogik)
+    public static JLabel lStatus = new JLabel(status.toString()); // Anzeige von Status
 
     public Board() {
-        createBoard(); // Erstellt Schachbrett mit Feldern
+        createBoard();
         initializeBoard();
     }
 
+    // Erstellt die GUI beim Starten des Programms
     public void createBoard() {
-        chessBoard = new JPanel(new GridLayout(8, 8)); // Erstellt ein Swing JPanel mit Grid-Layout
-        chessBoard.setBorder(new LineBorder(Color.BLACK)); // Setzt Randfarbe der GUI
+        // Erstellt das Schachbrett
+        chessBoard = new JPanel(new GridLayout(8, 8));
+        chessBoard.setBorder(new LineBorder(Color.BLACK));
 
         innerGUI = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        //Space-Panel
+        // Lücke oben links zum Auffüllen des Platzes
         JPanel space = new JPanel(new GridLayout(1, 1, 100, 0));
         JLabel lspace = new JLabel("", SwingConstants.CENTER);
         lspace.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -51,12 +53,12 @@ public class Board {
         gc.gridy = 0;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         innerGUI.add(space, gc);
-        // Letter-Row
+        // Letter-Row 1
         JPanel letterRow = new JPanel(new GridLayout(1, 8, 57, 0));
         gc.gridx = 1;
         gc.anchor = GridBagConstraints.PAGE_START;
         innerGUI.add(letterRow, gc);
-        // Number-Row
+        // Number-Row 1
         JPanel numberRow = new JPanel(new GridLayout(8, 1, 0, 50));
         gc.gridx = 0;
         gc.gridy = 1;
@@ -71,12 +73,12 @@ public class Board {
         }
         // Erstellt Number-Row 1
         for (int i = 8; i > 0; i--) {
-            JLabel lNumber = new JLabel(" " + String.valueOf(i) + " ");
+            JLabel lNumber = new JLabel(" " + i + " ");
             lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
             numberRow.add(lNumber);
         }
 
-        // Schachbrett
+        // Fügt das Schachbrett an seine Position ein
         gc.gridx = 1;
         gc.anchor = GridBagConstraints.CENTER;
         innerGUI.add(chessBoard, gc);
@@ -102,12 +104,12 @@ public class Board {
         }
         // Erstellt Number-Row 2
         for (int i = 8; i > 0; i--) {
-            JLabel lNumber = new JLabel(" " + String.valueOf(i) + "       ");
+            JLabel lNumber = new JLabel(" " + i + "       ");
             lNumber.setFont(new Font("Arial", Font.PLAIN, 20));
             numberRow1.add(lNumber);
         }
 
-        // Verlaufsfeld
+        // Verlaufsfeld (Feld in dem der Verlauf des Spiels gespeichert wird)
         txtA.setEditable(false);
 
         JScrollPane scr = new JScrollPane(txtA);
@@ -128,7 +130,7 @@ public class Board {
         gc.gridy = 0;
         innerGUI.add(pVerlauf, gc);
 
-        //Lücke neben Verlaufsfeld
+        //Lücke neben Verlaufsfeld (Optische Verbesserung)
         JPanel spaceRow = new JPanel(new GridLayout(8, 1, 0, 50));
         gc.gridx = 5;
         gc.gridy = 0;
@@ -140,7 +142,7 @@ public class Board {
             spaceRow.add(lSpace1);
         }
 
-        // Fügt Toolbar hinzu
+        // Fügt Toolbar hinzu, äußere GUI
         GUI = new JPanel(new BorderLayout(2, 2));
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
@@ -175,6 +177,7 @@ public class Board {
         about.addActionListener(new AboutButtonListener());
         about.setToolTipText("Informationen über das Projekt.");
 
+        // Fügt innere GUI in GUI mit Toolbar
         GUI.add(innerGUI);
 
         /*
@@ -185,9 +188,8 @@ public class Board {
             for (int x = 0; x < tiles[y].length; x++) {
                 JPanel pTile = new JPanel(new GridBagLayout());
 
-                //pTile.setSize(64,64);
                 pTile.setName(String.valueOf(x+y));
-                boolean tWhite; // Wird genutzt, um Angabe über Farbe des Feldes zwischenzuspeichern
+                boolean tWhite;
 
                 /*
                 Berechnet, ob das Feld Weiß oder Schwarz sein muss. Wenn die Summe der Koordinaten eine gerade Zahl ist,
@@ -203,7 +205,7 @@ public class Board {
                     tWhite = false;
                 }
 
-                tiles[x][y] = new Tile(x, y, pTile, tWhite, false); // Erstellt die Felder für das "tiles"-Array
+                tiles[x][y] = new Tile(x, y, pTile);
 
             }
         }
@@ -216,11 +218,7 @@ public class Board {
         }
     }
 
-    // Getter vom Schachbrett
-    public JPanel getChessBoard() {
-        return chessBoard;
-    }
-
+    // Methode wird beim Erstellen vom Board oder beim Laden von Spielständen genutzt, um Zeit zu sparen
     private static void createAndAddPiece(Piece piece, Tile tile, boolean black) {
         tile.setOccupyingPiece(piece);
         JButton button = piece.createPieceButton();
@@ -234,6 +232,7 @@ public class Board {
 
     // Füllt das Schachbrett mit den Anfangspositionen aller Figuren
     public static void initializeBoard() {
+        // Soundeffekt
         String startSfx = "src/sfx/start.wav";
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
@@ -245,6 +244,7 @@ public class Board {
             throw new RuntimeException(ex);
         }
 
+        // Fügt alle Spielfiguren an ihren Startpositionen hinzu
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
             Pawn whitePawn = new Pawn(true, false, tiles[x][6]);
@@ -297,6 +297,7 @@ public class Board {
 
     }
 
+    // Ändert, welche Farbe gerade anklickbar ist (wird nach einem Zug ausgeführt)
     public static void changeButtonsEnabled(boolean white){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -315,6 +316,7 @@ public class Board {
         }
     }
 
+    // Wenn das Spiel zu einem Endergebnis kommt, werden alle Buttons deaktiviert
     public static void disableAllButtons(){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -327,16 +329,20 @@ public class Board {
         }
     }
 
+    // Aktion für Button für neues Spiel
     public static class NewGameButtonListener implements ActionListener{
         public NewGameButtonListener(){}
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Soundeffekt
             Piece.FieldActionListener.NotifySound();
+
+            // Fragt zunächst, ob Spiel tatsächlich neu gestartet werden soll
             if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher, dass du ein neues Spiel" +
                 " starten willst? \n(Hinweis: Das aktuelle Spiel geht dabei verloren.)",
                 "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
-                        //Alles entfernen
+                        // Entfernt alle Buttons
                         for (int i = 0; i < 8; i++) {
                             for (int j = 0; j < 8; j++) {
                                 for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
@@ -346,7 +352,7 @@ public class Board {
                                 }
                             }
                         }
-                        //Alles neu erstellen
+                        // Erstellt alle Buttons neu, setzt Variablen auf Startzustand zurück
                         setStatus(GameStatus.WHITEMOVE);
                         Board.lStatus.setText(Board.status.toString());
                         initializeBoard();
@@ -356,20 +362,25 @@ public class Board {
         }
     }
 
+    // Aktion für Button zum Aufgeben
     public static class GiveUpButtonListener implements ActionListener{
         public GiveUpButtonListener(){
 
         }
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Soundeffekt
             Piece.FieldActionListener.NotifySound();
+            // Falls es bereits ein Ergebnis gibt, kann man nicht mehr aufgeben → Fehlermeldung
             if (Board.status.equals(GameStatus.WHITEWIN) || Board.status.equals(GameStatus.BLACKWIN)){
                 JOptionPane.showMessageDialog(null, "Du hast bereits verloren!\nStarte ein neues " +
                                 "Spiel um fortzufahren.", "Fehler", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/Warning.png"));
             }
+            // Falls der Spieler aufgeben kann, wird zunächst gefragt, ob er wirklich aufgeben möchte
             else if (JOptionPane.showConfirmDialog(null, "Bist du dir sicher dass du aufgeben willst?",
                 "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
+                    // Ausgabe zum Spielausgang
                     if (Board.status.equals(GameStatus.WHITEMOVE)){
                         Board.setStatus(GameStatus.BLACKWIN);
                         Board.lStatus.setText(Board.status.toString());
@@ -389,6 +400,7 @@ public class Board {
         }
     }
 
+    // Aktion für Button zum Speichern
     public static class SaveButtonListener implements ActionListener{
         public SaveButtonListener(){
 
@@ -398,7 +410,7 @@ public class Board {
             // Soundeffekt
             Piece.FieldActionListener.NotifySound();
 
-            // Speichert den Spielstand als String durch Stringbuilder
+            // Speichert den Spielstand als String durch String-builder
             StringBuilder str = new StringBuilder();
             // Spielstatus, nächster Bereich wird durch "?" gekennzeichnet
             str.append(status).append("?");
@@ -409,39 +421,27 @@ public class Board {
                     if (tiles[x][y].getOccupyingPiece() != null){
                         str.append(x).append(y);
                         // Art des Piece wird durch einen eindeutigen char gekennzeichnet
-                        switch (tiles[x][y].getOccupyingPiece().getClassName()){
-                            case "Läufer":
-                                str.append("L");
-                                break;
-                            case "König":
-                                str.append("K");
-                                break;
-                            case "Springer":
-                                str.append("S");
-                                break;
-                            case "Dame":
-                                str.append("D");
-                                break;
-                            case "Turm":
-                                str.append("T");
-                                break;
-                            case "Bauer":
-                                str.append("B");
-                                break;
+                        switch (tiles[x][y].getOccupyingPiece().getClassName()) {
+                            case "Läufer" -> str.append("L");
+                            case "König" -> str.append("K");
+                            case "Springer" -> str.append("S");
+                            case "Dame" -> str.append("D");
+                            case "Turm" -> str.append("T");
+                            case "Bauer" -> str.append("B");
                         }
                         // Attribut "white"
                         str.append(tiles[x][y].getOccupyingPiece().isWhite() ? "1" : "0");
                         // Attribut "moved"
                         str.append(tiles[x][y].getOccupyingPiece().isMoved() ? "1" : "0");
-                        // Attribut castled bei King
+                        // Attribut "castled" bei King
                         if (Objects.equals(tiles[x][y].getOccupyingPiece().getClassName(), "König")){
                             King k = (King) tiles[x][y].getOccupyingPiece();
                             str.append(k.isCastled() ? "0" : "1");
                         }
-                        // Attribut enPassant bei Pawn
+                        // Attribut "enPassant" bei Pawn
                         if (Objects.equals(tiles[x][y].getOccupyingPiece().getClassName(), "Bauer")){
                             Pawn p = (Pawn) tiles[x][y].getOccupyingPiece();
-                            str.append(p.isEnPassant() ? "0" : "1");
+                            str.append(p.isEnPassant() ? "1" : "0");
                         }
                         // Ende der Informationen über ein Piece wird durch ";" gekennzeichnet
                         str.append(";");
@@ -453,6 +453,7 @@ public class Board {
             durch "~" gekennzeichnet*/
             str.append("#").append(txtA.getText()).append("~").append(vCounter);
 
+            // Das Ergebnis wird als String gespeichert
             String saveFile = str.toString();
 
             // File-Dialog
@@ -480,19 +481,21 @@ public class Board {
         }
     }
 
+    // Button zum Laden eines Spielstands
     public static class LoadButtonListener implements ActionListener{
         public LoadButtonListener(){
 
         }
         @Override
         public void actionPerformed(ActionEvent e){
+            // Soundeffekt
             Piece.FieldActionListener.NotifySound();
 
             // Lädt die Textdatei
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Wähle eine .txt Datei");
             int result = fileChooser.showOpenDialog(null);
-            String fileContent = "";
+            String fileContent;
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 String filePath = selectedFile.getAbsolutePath();
@@ -502,7 +505,7 @@ public class Board {
                     throw new RuntimeException(ex);
                 }
 
-                // Alles entfernen
+                // Entfernt alle Buttons auf dem Feld
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
                         for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
@@ -513,13 +516,15 @@ public class Board {
                     }
                 }
 
-                // Pieces ablesen und erstellen
+                // Liest die Pieces aus und erstellt diese
                 int sStart = fileContent.indexOf('?');
                 int sEnd = fileContent.indexOf('#');
 
+                // Teilt Abschnitt mit Pieces in Array mit einzelnen Piecedaten auf
                 String sSubstring = fileContent.substring(sStart + 1, sEnd);
                 String[] sParts = sSubstring.split(";");
 
+                //Soundeffekt
                 String startSfx = "src/sfx/start.wav";
                 try {
                     AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
@@ -539,8 +544,9 @@ public class Board {
                 int rookCounter = 0;
                 int pawnCounter = 0;
 
-                // Erstellt die einzelnen Pieces
+                // Erstellt die einzelnen Pieces, geht alle Abschnitte einzeln durch
                 for (String sPart : sParts) {
+                    // Arbeitet zunächst alle Informationen aus dem Abschnitt als char heraus
                     char cX = sPart.charAt(0);
                     char cY = sPart.charAt(1);
                     char cPiece = sPart.charAt(2);
@@ -549,16 +555,19 @@ public class Board {
                     char cE = 0;
                     if (!(sPart.charAt(5) == 0)){
                         cE = sPart.charAt(5);
+                        System.out.println(cX+cY+cE);
                     }
 
+                    // Wandelt die Chars in Integer um
                     int x = cX - '0';
                     int y = cY - '0';
                     int cWhite = cW - '0';
                     int cMoved = cM - '0';
                     int cExtra = cE - '0';
 
-                    /*Der erste Switch checkt, was für ein Piece gewollt ist. Jedoch sind ein zweiter Switch sowie die
-                    Piece-Counter erforderlich, da jedes Objekt anders heißen muss.*/
+                    /*Der erste Switch checkt, was für ein Piece gewollt ist. Jedoch sind ein zweiter Switch sowie der
+                    Piece-Counter erforderlich, da jedes Objekt leider anders heißen muss.*/
+                    // (Code ab hier sehr unschön, leider keine andere Lösung gefunden)
                     pSw : switch (cPiece){
                         case 'L':
                             switch (bishopCounter){
@@ -771,12 +780,12 @@ public class Board {
                     }
                 }
 
-                // Lade den Verlauf
+                // Arbeitet den Verlaufsbereich heraus, fügt den String wieder in Verlaufsfeld ein
                 String afterHash = fileContent.substring(fileContent.indexOf("#") + 1);
                 String rTxtA = afterHash.substring(0, afterHash.indexOf("~"));
                 txtA.setText(rTxtA);
 
-                // Aktualisiere vCounter
+                // Arbeitet vCounter heraus, aktualisiert diesen
                 String vcIntegerPart = fileContent.substring(fileContent.indexOf("~") + 1);
                 vCounter = Integer.parseInt(vcIntegerPart);
 
@@ -788,7 +797,7 @@ public class Board {
                 setStatus(GameStatus.valueOf(sStatus));
                 Board.lStatus.setText(Board.status.toString());
 
-                // Status wirksam machen
+                // Status umsetzen
                 if (status.equals(GameStatus.BLACKMOVE)){
                     changeButtonsEnabled(true);
                 } else if (status.equals(GameStatus.WHITEWIN) || status.equals(GameStatus.BLACKWIN)) {
@@ -798,21 +807,31 @@ public class Board {
         }
     }
 
+    // Button für Informationen über das Projekt
     public static class AboutButtonListener implements ActionListener{
         public AboutButtonListener(){}
         @Override
         public void actionPerformed(ActionEvent e){
+            // Soundeffekt
             Piece.FieldActionListener.NotifySound();
-            JOptionPane.showMessageDialog(null, "Dieses Schachspiel ist ein Gemeinschaftsprojekt\n" +
-                            "von Benjamin Dembinski und Filip Gulde.\nEs wurde für den Informatikunterricht des 4. Semesters\n" +
-                            "an der kath. Theresienschule Berlin programmiert.\n\nMedienquellen" +
-                            "\n\nSchachfiguren: commons.wikimedia.org, modifiziert\n"
-                            + "Icons: flaticon.com, modifiziert\nSoundeffekte: chess.com",
+            // Fenster mit Informationen
+            JOptionPane.showMessageDialog(null, """
+                            Dieses Schachspiel ist ein Gemeinschaftsprojekt
+                            von Benjamin Dembinski und Filip Gulde.
+                            Es wurde für den Informatikunterricht des 4. Semesters
+                            an der kath. Theresienschule Berlin programmiert.
+
+                            Medienquellen
+
+                            Schachfiguren: commons.wikimedia.org, modifiziert
+                            Icons: flaticon.com, modifiziert
+                            Soundeffekte: chess.com""",
                     "Über das Projekt", JOptionPane.PLAIN_MESSAGE, new ImageIcon(new ImageIcon("src/pics/chess.png")
                             .getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT)));
         }
     }
 
+    // Getter für Tiles-Array
     public static Tile[][] getTiles() {
         return tiles;
     }
@@ -822,6 +841,7 @@ public class Board {
         return this.GUI;
     }
 
+    // Setter für Status
     public static void setStatus(GameStatus status) {
         Board.status = status;
     }

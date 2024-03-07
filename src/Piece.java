@@ -14,9 +14,8 @@ public abstract class Piece {
     public static Piece[] tempPieces;
     public Piece(boolean white, boolean killed, Tile position) {
         this.white = white;
-        this.killed = killed;
         this.position = position;
-        this.tempPieces = new Piece[0];  // Füge diese Zeile hinzu, um das Array zu initialisieren.
+        tempPieces = new Piece[0];  // Füge diese Zeile hinzu, um das Array zu initialisieren.
     }
 
     public Tile getPosition() {
@@ -42,8 +41,7 @@ public abstract class Piece {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++){
-                if (Board.tiles[i][j].getOccupyingPiece() instanceof Pawn){
-                    Pawn pawn = (Pawn) Board.tiles[i][j].getOccupyingPiece();
+                if (Board.tiles[i][j].getOccupyingPiece() instanceof Pawn pawn){
                     if (pawn.isWhite() == Board.tiles[position.getX()][position.getY()].getOccupyingPiece().isWhite()){
                         pawn.setEnPassant(false);
                     }
@@ -52,12 +50,10 @@ public abstract class Piece {
         }
 
         if (!Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn pawn) {
             pawn.setEnPassant(true);
         } else if (Board.tiles[newX][newY].getButton().isDefaultCapable() &&
-                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn) {
-            Pawn pawn = (Pawn) Board.tiles[position.getX()][position.getY()].getOccupyingPiece();
+                Board.tiles[position.getX()][position.getY()].getOccupyingPiece() instanceof Pawn pawn) {
             pawn.setEnPassant(false);
         }
 
@@ -101,20 +97,16 @@ public abstract class Piece {
     }
 
     private static void checkCastleR(Piece piece) {
-        if (piece instanceof King && Board.tiles[7][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
-            King king = (King) piece;
+        if (piece instanceof King king && Board.tiles[7][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
             // Find the rook position for castling
             Tile rookTile = Board.tiles[7][piece.getPosition().getY()];
-            Tile destTile = Board.tiles[5][piece.getPosition().getY()];
             king.castle(rookTile);
         }
     }
     private static void checkCastleL(Piece piece) {
-        if (piece instanceof King && Board.tiles[0][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
-            King king = (King) piece;
+        if (piece instanceof King king && Board.tiles[0][piece.getPosition().getY()].getOccupyingPiece() instanceof Rook) {
             //Find the rook position for castling
             Tile rookTile = Board.tiles[0][piece.getPosition().getY()];
-            Tile destTile = Board.tiles[3][piece.getPosition().getY()];
             king.castle(rookTile);
 
         }
@@ -282,6 +274,7 @@ public abstract class Piece {
                 removeFieldButtons();
 
             }
+            // Macht neuen Spielstatus wirksam (gibt ggf. Ausgabe bei Spielende)
             if (Board.status.equals(GameStatus.WHITEMOVE)) {
                 Board.changeButtonsEnabled(true);
                 Board.setStatus(GameStatus.BLACKMOVE);
@@ -299,9 +292,11 @@ public abstract class Piece {
                 JOptionPane.showMessageDialog(null, "Schwarz hat das Spiel gewonnen!", "Spielausgang",
                         JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/pics/BlackWin.png"));
             }
+            // Ändert Anzeige von Status
             Board.lStatus.setText(Board.status.toString());
         }
 
+        // Soundeffekt beim Erstellen von GUIs. Wird so oft genutzt, dass sich eigene Methode anbot.
         public static void NotifySound() {
             String notifySfx = "src/sfx/notify.wav";
             try {
@@ -316,6 +311,7 @@ public abstract class Piece {
         }
     }
 
+    // Entfernt alle Buttons auf dem Feld. for-Schleifen fahren Feld ab und entfernen ggf. den Button.
     public static void removeFieldButtons(){
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++){
@@ -357,23 +353,20 @@ public abstract class Piece {
 
     public abstract String getClassName(); // Für ToolTips
 
+    // Getter für "moved"-Attribut
     public boolean isMoved() {
         return moved;
     }
 
+    // Setter für "moved"-Attribut
     public void setMoved(boolean moved) {
         this.moved = moved;
     }
 
     protected static boolean isValidMove(int x, int y) {
         if (x < 8 && x > -1 && y < 8 && y > -1) {
-            if (Board.tiles[x][y].getOccupyingPiece() != null) {
-                return false;
-            } else return true;
+            return Board.tiles[x][y].getOccupyingPiece() == null;
         } else return false;
-    }
-    public void statusChange(){
-
     }
 }
 

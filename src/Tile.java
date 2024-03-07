@@ -7,19 +7,18 @@ Mit der Tile Klasse werden die Felder des Schachbretts erstellt.
  */
 
 public class Tile {
-    private int x;
-    private int y;
-    private JPanel pTile; // Die Felder werden in Form von Buttons dargestellt. "b" wegen "Button"!!!
-    private boolean white; //true = weißes Feld, false = schwarzes Feld
+    private final int x;
+    private final int y;
+    private final JPanel pTile; // Die Felder werden in Form von Buttons dargestellt. "b" wegen "Button"!!!
     private Piece occupyingPiece; // Das Piece, das sich auf diesem Feld befindet
     public boolean occupied;
 
 
-    public Tile(int x, int y, JPanel pTile, boolean white, boolean occupied) {
+    public Tile(int x, int y, JPanel pTile) {
         this.x = x;
         this.y = y;
         this.pTile = pTile;
-        this.white = white;
+        //true = weißes Feld, false = schwarzes Feld
     }
 
     // Getter und Setter
@@ -33,32 +32,12 @@ public class Tile {
         return pTile;
     }
 
-    public void setpTile(JPanel pTile) {
-        this.pTile = pTile;
-    }
-
-    public boolean isWhite() {
-        return white;
-    }
-
-    public void setWhite(boolean tWhite) {
-        this.white = white;
-    }
-
     public int getY() {
         return y;
     }
 
     public int getX() {
         return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public boolean isOccupied() {
@@ -75,10 +54,5 @@ public class Tile {
         }
         return null;  // Wenn kein Button gefunden wurde
     }
-
-    public boolean hasButton() {
-        return getButton() != null;
-    }
-
 }
 

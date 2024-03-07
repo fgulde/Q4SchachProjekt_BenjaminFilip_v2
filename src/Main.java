@@ -9,39 +9,25 @@ public class Main {
         // Neues Schachbrett, wobei createBoard() und initializeBoard() durch Konstruktor ausgeführt werden
         Board board = new Board();
 
+        // Setzt Status auf Weiß
         Board.setStatus(GameStatus.WHITEMOVE);
         Board.lStatus.setText(Board.status.toString());
 
         // Neuer JFrame
         JFrame fBoard = new JFrame();
 
-        // Fügt Schachbrett dem JFrame hinzu, Schachbrett enthält alle GUI-Elemente in Form von "chessboard"-JPanel
+        // Fügt Schachbrett dem JFrame hinzu
         fBoard.add(board.getGUI());
 
-        // Stellt sicher, dass das Programm beendet wird, wenn das Fenster geschlossen wird
+        // Weitere Einstellungen am JFrame
         fBoard.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        // Positioniert das Fenster an einer geeigneten Position auf dem Bildschirm
         fBoard.setLocationByPlatform(true);
-
-        // Stellt sicher, dass das Fenster nicht zu klein wird und skaliert es - wenn nötig - auf die richtige Größe
         fBoard.pack();
-
-        // Stellt kleinste mögliche Größe des Fensters auf die Größe des Board-Objekts
         fBoard.setMinimumSize(fBoard.getSize());
-
-        // Setzt die Größe des Fensters auf 500x500 Pixel
         fBoard.setSize(new Dimension(500, 500));
-
-        //Nennt das Fenster "Schachbrett"
         fBoard.setTitle("Schachbrett");
-
         fBoard.setIconImage(new ImageIcon("src/pics/Chess.png").getImage());
-
-        // Verhindert, dass das Fenster skaliert werden kann, da sonst das Schachbrett verzerrt werden würde
         fBoard.setResizable(false);
-
-        // Macht das Fenster sichtbar
         fBoard.setVisible(true);
     }
 }
