@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.util.Arrays;
 
 public class Bishop extends Piece {
-    public Bishop(boolean isWhite, boolean killed, Tile position) {
-        super(isWhite, killed, position);
+    public Bishop(boolean isWhite, Tile position) {
+        super(isWhite, position);
     }
 
     @Override

@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.util.Arrays;
 
 public class King extends Piece {
-    public King(boolean isWhite, boolean killed, Tile position) {
-        super(isWhite, killed, position);
+    public King(boolean isWhite, Tile position) {
+        super(isWhite, position);
     }
 
     public boolean castled = false;

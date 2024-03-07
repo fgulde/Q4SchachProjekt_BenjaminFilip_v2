@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.util.Arrays;
 
 public class Rook extends Piece {
-    public Rook(boolean isWhite, boolean killed, Tile position) {
-        super(isWhite, killed, position);
+    public Rook(boolean isWhite, Tile position) {
+        super(isWhite, position);
     }
 
     @Override

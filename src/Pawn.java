@@ -10,8 +10,8 @@ public class Pawn extends Piece {
 
     public boolean enPassant = false;
 
-    public Pawn(boolean isWhite, boolean killed, Tile position) {
-        super(isWhite, killed, position);
+    public Pawn(boolean isWhite, Tile position) {
+        super(isWhite, position);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Pawn extends Piece {
             int newY1 = currentTile.getY() + direction;
             Tile newTile1 = Board.tiles[newX][newY1];
 
-            // Überprüfen, ob die neuen Positionen innerhalb des Spielbretts liegen
+            // Überprüfen, ob die neuen Positionen valide sind
             if (isValidMove(newX, newY) && isValidMove(newX, newY1)) {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
@@ -59,6 +59,7 @@ public class Pawn extends Piece {
         }
     }
 
+    // prüft, ob auf einem Feld eine gegnerische Figur ist
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
             if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
@@ -72,6 +73,7 @@ public class Pawn extends Piece {
         }
     }
 
+    // erzeugt, wenn möglich killButtons an Positionen die der Bauer schlagen kann
     public void tryKill(int x, int y) {
         for (int i : new int[]{-1, 1}) {
             int newX = x + i;
@@ -147,13 +149,13 @@ public class Pawn extends Piece {
 
                 // Ausgewähltes Piece erzeugen
                 Piece promotedPiece = switch (choice) {
-                    case 0 -> new Queen(color, false, getPosition());
-                    case 1 -> new Rook(color, false, getPosition());
-                    case 2 -> new Bishop(color, false, getPosition());
-                    case 3 -> new Knight(color, false, getPosition());
+                    case 0 -> new Queen(color, getPosition());
+                    case 1 -> new Rook(color, getPosition());
+                    case 2 -> new Bishop(color, getPosition());
+                    case 3 -> new Knight(color, getPosition());
                     default ->
                         // Standardauswahl ist Königin, wenn kein anderes Piece ausgewählt wurde
-                            new Queen(color, false, getPosition());
+                            new Queen(color, getPosition());
                 };
 
                 // Ersetze den Pawn durch die gewählte Figur

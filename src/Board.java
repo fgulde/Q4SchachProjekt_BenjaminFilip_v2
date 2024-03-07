@@ -247,52 +247,52 @@ public class Board {
         // Fügt alle Spielfiguren an ihren Startpositionen hinzu
         for (int x = 0; x < 8; x++) {
             // Erstellt weiße Bauern in der zweiten Reihe
-            Pawn whitePawn = new Pawn(true, false, tiles[x][6]);
+            Pawn whitePawn = new Pawn(true,  tiles[x][6]);
             createAndAddPiece(whitePawn, tiles[x][6], false);
 
             // Erstellt schwarze Bauern in der siebten Reihe
-            Pawn blackPawn = new Pawn(false, false, tiles[x][1]);
+            Pawn blackPawn = new Pawn(false,  tiles[x][1]);
             createAndAddPiece(blackPawn, tiles[x][1], true);
         }
-        Bishop whiteBishop1 = new Bishop(true,false,tiles[2][7]);
+        Bishop whiteBishop1 = new Bishop(true,tiles[2][7]);
         createAndAddPiece(whiteBishop1, tiles[2][7], false);
-        Bishop whiteBishop2 = new Bishop(true,false,tiles[5][7]);
+        Bishop whiteBishop2 = new Bishop(true,tiles[5][7]);
         createAndAddPiece(whiteBishop2, tiles[5][7], false);
-        Bishop blackBishop1 = new Bishop(false,false,tiles[2][0]);
+        Bishop blackBishop1 = new Bishop(false,tiles[2][0]);
         createAndAddPiece(blackBishop1, tiles[2][0], true);
-        Bishop blackBishop2 = new Bishop(false,false,tiles[5][0]);
+        Bishop blackBishop2 = new Bishop(false,tiles[5][0]);
         createAndAddPiece(blackBishop2, tiles[5][0], true);
 
 
-        Rook whiteRook1 = new Rook(true,false,tiles[0][7]);
+        Rook whiteRook1 = new Rook(true,tiles[0][7]);
         createAndAddPiece(whiteRook1, tiles[0][7], false);
-        Rook whiteRook2 = new Rook(true,false,tiles[7][7]);
+        Rook whiteRook2 = new Rook(true,tiles[7][7]);
         createAndAddPiece(whiteRook2, tiles[7][7], false);
-        Rook blackRook1 = new Rook(false,false,tiles[0][0]);
+        Rook blackRook1 = new Rook(false,tiles[0][0]);
         createAndAddPiece(blackRook1, tiles[0][0], true);
-        Rook blackRook2 = new Rook(false,false,tiles[7][0]);
+        Rook blackRook2 = new Rook(false,tiles[7][0]);
         createAndAddPiece(blackRook2, tiles[7][0], true);
 
 
-        Knight whiteKnight1 = new Knight(true,false,tiles[1][7]);
+        Knight whiteKnight1 = new Knight(true,tiles[1][7]);
         createAndAddPiece(whiteKnight1, tiles[1][7], false);
-        Knight whiteKnight2 = new Knight(true,false,tiles[6][7]);
+        Knight whiteKnight2 = new Knight(true,tiles[6][7]);
         createAndAddPiece(whiteKnight2, tiles[6][7], false);
-        Knight blackKnight1 = new Knight(false,false,tiles[1][0]);
+        Knight blackKnight1 = new Knight(false,tiles[1][0]);
         createAndAddPiece(blackKnight1, tiles[1][0], true);
-        Knight blackKnight2 = new Knight(false,false,tiles[6][0]);
+        Knight blackKnight2 = new Knight(false,tiles[6][0]);
         createAndAddPiece(blackKnight2, tiles[6][0], true);
 
 
-        Queen whiteQueen = new Queen(true, false, tiles[3][7]);
+        Queen whiteQueen = new Queen(true, tiles[3][7]);
         createAndAddPiece(whiteQueen, tiles[3][7], false);
-        Queen blackQueen = new Queen(false, false, tiles[3][0]);
+        Queen blackQueen = new Queen(false, tiles[3][0]);
         createAndAddPiece(blackQueen, tiles[3][0], true);
 
 
-        King whiteKing = new King(true, false, tiles[4][7]);
+        King whiteKing = new King(true, tiles[4][7]);
         createAndAddPiece(whiteKing, tiles[4][7], false);
-        King blackKing = new King(false, false, tiles[4][0]);
+        King blackKing = new King(false, tiles[4][0]);
         createAndAddPiece(blackKing, tiles[4][0], true);
 
     }
@@ -553,7 +553,8 @@ public class Board {
                     char cW = sPart.charAt(3);
                     char cM = sPart.charAt(4);
                     char cE = 0;
-                    if (!(sPart.charAt(5) == 0)){
+                    // Falls es ein Extra-Attribut gibt (Bauer, König) wird auch dieses ausgelesen
+                    if (sPart.length() == 6){
                         cE = sPart.charAt(5);
                         System.out.println(cX+cY+cE);
                     }
@@ -572,36 +573,36 @@ public class Board {
                         case 'L':
                             switch (bishopCounter){
                                 case 0:
-                                    Bishop bishop1 = new Bishop((cWhite == 1),false,tiles[x][y]);
+                                    Bishop bishop1 = new Bishop((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(bishop1, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 1:
-                                    Bishop bishop2 = new Bishop((cWhite == 1),false,tiles[x][y]);
+                                    Bishop bishop2 = new Bishop((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(bishop2, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 2:
-                                    Bishop bishop3 = new Bishop((cWhite == 1),false,tiles[x][y]);
+                                    Bishop bishop3 = new Bishop((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(bishop3, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 3:
-                                    Bishop bishop4 = new Bishop((cWhite == 1),false,tiles[x][y]);
+                                    Bishop bishop4 = new Bishop((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(bishop4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'K':
                             switch (kingCounter){
                                 case 0:
-                                    King king1 = new King((cWhite == 1),false,tiles[x][y]);
+                                    King king1 = new King((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(king1, tiles[x][y], (cWhite == 0));
                                     king1.setMoved((cMoved == 1));
                                     king1.setCastled((cExtra == 1));
                                     kingCounter++;
                                     break pSw;
                                 case 1:
-                                    King king2 = new King((cWhite == 1),false,tiles[x][y]);
+                                    King king2 = new King((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(king2, tiles[x][y], (cWhite == 0));
                                     king2.setCastled((cExtra == 1));
                                     king2.setMoved((cMoved == 1));
@@ -610,168 +611,168 @@ public class Board {
                         case 'S':
                             switch (knightCounter){
                                 case 0:
-                                    Knight knight1 = new Knight((cWhite == 1),false,tiles[x][y]);
+                                    Knight knight1 = new Knight((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(knight1, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 1:
-                                    Knight knight2 = new Knight((cWhite == 1),false,tiles[x][y]);
+                                    Knight knight2 = new Knight((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(knight2, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 2:
-                                    Knight knight3 = new Knight((cWhite == 1),false,tiles[x][y]);
+                                    Knight knight3 = new Knight((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(knight3, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 3:
-                                    Knight knight4 = new Knight((cWhite == 1),false,tiles[x][y]);
+                                    Knight knight4 = new Knight((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(knight4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'D':
                             switch (queenCounter){
                                 case 0:
-                                    Queen queen1 = new Queen((cWhite == 1),false,tiles[x][y]);
+                                    Queen queen1 = new Queen((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(queen1, tiles[x][y], (cWhite == 0));
                                     queenCounter++;
                                     break pSw;
                                 case 1:
-                                    Queen queen2 = new Queen((cWhite == 1),false,tiles[x][y]);
+                                    Queen queen2 = new Queen((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(queen2, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'T':
                             switch (rookCounter){
                                 case 0:
-                                    Rook rook1 = new Rook((cWhite == 1),false,tiles[x][y]);
+                                    Rook rook1 = new Rook((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(rook1, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 1:
-                                    Rook rook2 = new Rook((cWhite == 1),false,tiles[x][y]);
+                                    Rook rook2 = new Rook((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(rook2, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 2:
-                                    Rook rook3 = new Rook((cWhite == 1),false,tiles[x][y]);
+                                    Rook rook3 = new Rook((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(rook3, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 3:
-                                    Rook rook4 = new Rook((cWhite == 1),false,tiles[x][y]);
+                                    Rook rook4 = new Rook((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(rook4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'B':
                             switch (pawnCounter){
                                 case 0:
-                                    Pawn pawn1 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn1 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn1, tiles[x][y], (cWhite == 0));
                                     pawn1.setMoved((cMoved == 1));
                                     pawn1.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 1:
-                                    Pawn pawn2 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn2 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn2, tiles[x][y], (cWhite == 0));
                                     pawn2.setMoved((cMoved == 1));
                                     pawn2.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 2:
-                                    Pawn pawn3 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn3 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn3, tiles[x][y], (cWhite == 0));
                                     pawn3.setMoved((cMoved == 1));
                                     pawn3.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 3:
-                                    Pawn pawn4 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn4 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn4, tiles[x][y], (cWhite == 0));
                                     pawn4.setMoved((cMoved == 1));
                                     pawn4.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 4:
-                                    Pawn pawn5 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn5 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn5, tiles[x][y], (cWhite == 0));
                                     pawn5.setMoved((cMoved == 1));
                                     pawn5.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 5:
-                                    Pawn pawn6 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn6 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn6, tiles[x][y], (cWhite == 0));
                                     pawn6.setMoved((cMoved == 1));
                                     pawn6.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 6:
-                                    Pawn pawn7 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn7 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn7, tiles[x][y], (cWhite == 0));
                                     pawn7.setMoved((cMoved == 1));
                                     pawn7.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 7:
-                                    Pawn pawn8 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn8 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn8, tiles[x][y], (cWhite == 0));
                                     pawn8.setMoved((cMoved == 1));
                                     pawn8.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 8:
-                                    Pawn pawn9 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn9 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn9, tiles[x][y], (cWhite == 0));
                                     pawn9.setMoved((cMoved == 1));
                                     pawn9.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 9:
-                                    Pawn pawn10 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn10 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn10, tiles[x][y], (cWhite == 0));
                                     pawn10.setMoved((cMoved == 1));
                                     pawn10.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 10:
-                                    Pawn pawn11 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn11 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn11, tiles[x][y], (cWhite == 0));
                                     pawn11.setMoved((cMoved == 1));
                                     pawn11.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 11:
-                                    Pawn pawn12 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn12 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn12, tiles[x][y], (cWhite == 0));
                                     pawn12.setMoved((cMoved == 1));
                                     pawn12.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 12:
-                                    Pawn pawn13 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn13 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn13, tiles[x][y], (cWhite == 0));
                                     pawn13.setMoved((cMoved == 1));
                                     pawn13.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 13:
-                                    Pawn pawn14 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn14 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn14, tiles[x][y], (cWhite == 0));
                                     pawn14.setMoved((cMoved == 1));
                                     pawn14.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 14:
-                                    Pawn pawn15 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn15 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn15, tiles[x][y], (cWhite == 0));
                                     pawn15.setMoved((cMoved == 1));
                                     pawn15.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 15:
-                                    Pawn pawn16 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    Pawn pawn16 = new Pawn((cWhite == 1),tiles[x][y]);
                                     createAndAddPiece(pawn16, tiles[x][y], (cWhite == 0));
                                     pawn16.setMoved((cMoved == 1));
                                     pawn16.setEnPassant((cExtra == 1));

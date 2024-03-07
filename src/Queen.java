@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.util.Arrays;
 
 public class Queen extends Piece {
-    public Queen(boolean isWhite, boolean killed, Tile position) {
-        super(isWhite, killed, position);
+    public Queen(boolean isWhite, Tile position) {
+        super(isWhite, position);
     }
 
     @Override
