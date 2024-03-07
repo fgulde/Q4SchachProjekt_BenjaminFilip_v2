@@ -563,90 +563,94 @@ public class Board {
                         case 'L':
                             switch (bishopCounter){
                                 case 0:
-                                    Bishop bishop1 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Bishop bishop1 = new Bishop((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(bishop1, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 1:
-                                    Bishop bishop2 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Bishop bishop2 = new Bishop((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(bishop2, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 2:
-                                    Bishop bishop3 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Bishop bishop3 = new Bishop((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(bishop3, tiles[x][y], (cWhite == 0));
                                     bishopCounter++;
                                     break pSw;
                                 case 3:
-                                    Bishop bishop4 = new Bishop((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Bishop bishop4 = new Bishop((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(bishop4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'K':
                             switch (kingCounter){
                                 case 0:
-                                    King king1 = new King((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    King king1 = new King((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(king1, tiles[x][y], (cWhite == 0));
+                                    king1.setMoved((cMoved == 1));
+                                    king1.setCastled((cExtra == 1));
                                     kingCounter++;
                                     break pSw;
                                 case 1:
-                                    King king2 = new King((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    King king2 = new King((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(king2, tiles[x][y], (cWhite == 0));
+                                    king2.setCastled((cExtra == 1));
+                                    king2.setMoved((cMoved == 1));
                                     break pSw;
                             }
                         case 'S':
                             switch (knightCounter){
                                 case 0:
-                                    Knight knight1 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Knight knight1 = new Knight((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(knight1, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 1:
-                                    Knight knight2 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Knight knight2 = new Knight((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(knight2, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 2:
-                                    Knight knight3 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Knight knight3 = new Knight((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(knight3, tiles[x][y], (cWhite == 0));
                                     knightCounter++;
                                     break pSw;
                                 case 3:
-                                    Knight knight4 = new Knight((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Knight knight4 = new Knight((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(knight4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'D':
                             switch (queenCounter){
                                 case 0:
-                                    Queen queen1 = new Queen((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Queen queen1 = new Queen((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(queen1, tiles[x][y], (cWhite == 0));
                                     queenCounter++;
                                     break pSw;
                                 case 1:
-                                    Queen queen2 = new Queen((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Queen queen2 = new Queen((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(queen2, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
                         case 'T':
                             switch (rookCounter){
                                 case 0:
-                                    Rook rook1 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Rook rook1 = new Rook((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(rook1, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 1:
-                                    Rook rook2 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Rook rook2 = new Rook((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(rook2, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 2:
-                                    Rook rook3 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Rook rook3 = new Rook((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(rook3, tiles[x][y], (cWhite == 0));
                                     rookCounter++;
                                     break pSw;
                                 case 3:
-                                    Rook rook4 = new Rook((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Rook rook4 = new Rook((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(rook4, tiles[x][y], (cWhite == 0));
                                     break pSw;
                             }
