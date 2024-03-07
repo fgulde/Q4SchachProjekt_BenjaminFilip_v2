@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -169,7 +170,7 @@ public class Board {
         tools.addSeparator();
         tools.add(lStatus);
 
-        tools.addSeparator(new Dimension(355, 5));
+        tools.addSeparator(new Dimension(400, 5));
         tools.add(about);
         about.addActionListener(new AboutButtonListener());
         about.setToolTipText("Informationen über das Projekt.");
@@ -432,6 +433,16 @@ public class Board {
                         str.append(tiles[x][y].getOccupyingPiece().isWhite() ? "1" : "0");
                         // Attribut "moved"
                         str.append(tiles[x][y].getOccupyingPiece().isMoved() ? "1" : "0");
+                        // Attribut castled bei King
+                        if (Objects.equals(tiles[x][y].getOccupyingPiece().getClassName(), "König")){
+                            King k = (King) tiles[x][y].getOccupyingPiece();
+                            str.append(k.isCastled() ? "0" : "1");
+                        }
+                        // Attribut enPassant bei Pawn
+                        if (Objects.equals(tiles[x][y].getOccupyingPiece().getClassName(), "Bauer")){
+                            Pawn p = (Pawn) tiles[x][y].getOccupyingPiece();
+                            str.append(p.isEnPassant() ? "0" : "1");
+                        }
                         // Ende der Informationen über ein Piece wird durch ";" gekennzeichnet
                         str.append(";");
                     }
@@ -460,7 +471,7 @@ public class Board {
                 try {
                     // Schreibt den String als File
                     PrintWriter writer = new PrintWriter(selectedFile);
-                    writer.println(saveFile);
+                    writer.print(saveFile);
                     writer.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -535,11 +546,16 @@ public class Board {
                     char cPiece = sPart.charAt(2);
                     char cW = sPart.charAt(3);
                     char cM = sPart.charAt(4);
+                    char cE = 0;
+                    if (!(sPart.charAt(5) == 0)){
+                        cE = sPart.charAt(5);
+                    }
 
                     int x = cX - '0';
                     int y = cY - '0';
                     int cWhite = cW - '0';
                     int cMoved = cM - '0';
+                    int cExtra = cE - '0';
 
                     /*Der erste Switch checkt, was für ein Piece gewollt ist. Jedoch sind ein zweiter Switch sowie die
                     Piece-Counter erforderlich, da jedes Objekt anders heißen muss.*/
@@ -637,23 +653,115 @@ public class Board {
                         case 'B':
                             switch (pawnCounter){
                                 case 0:
-                                    Pawn pawn1 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Pawn pawn1 = new Pawn((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(pawn1, tiles[x][y], (cWhite == 0));
+                                    pawn1.setMoved((cMoved == 1));
+                                    pawn1.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 1:
-                                    Pawn pawn2 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Pawn pawn2 = new Pawn((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(pawn2, tiles[x][y], (cWhite == 0));
+                                    pawn2.setMoved((cMoved == 1));
+                                    pawn2.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 2:
-                                    Pawn pawn3 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Pawn pawn3 = new Pawn((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(pawn3, tiles[x][y], (cWhite == 0));
+                                    pawn3.setMoved((cMoved == 1));
+                                    pawn3.setEnPassant((cExtra == 1));
                                     pawnCounter++;
                                     break pSw;
                                 case 3:
-                                    Pawn pawn4 = new Pawn((cWhite == 1),(cMoved == 1),tiles[x][y]);
+                                    Pawn pawn4 = new Pawn((cWhite == 1),false,tiles[x][y]);
                                     createAndAddPiece(pawn4, tiles[x][y], (cWhite == 0));
+                                    pawn4.setMoved((cMoved == 1));
+                                    pawn4.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 4:
+                                    Pawn pawn5 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn5, tiles[x][y], (cWhite == 0));
+                                    pawn5.setMoved((cMoved == 1));
+                                    pawn5.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 5:
+                                    Pawn pawn6 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn6, tiles[x][y], (cWhite == 0));
+                                    pawn6.setMoved((cMoved == 1));
+                                    pawn6.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 6:
+                                    Pawn pawn7 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn7, tiles[x][y], (cWhite == 0));
+                                    pawn7.setMoved((cMoved == 1));
+                                    pawn7.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 7:
+                                    Pawn pawn8 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn8, tiles[x][y], (cWhite == 0));
+                                    pawn8.setMoved((cMoved == 1));
+                                    pawn8.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 8:
+                                    Pawn pawn9 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn9, tiles[x][y], (cWhite == 0));
+                                    pawn9.setMoved((cMoved == 1));
+                                    pawn9.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 9:
+                                    Pawn pawn10 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn10, tiles[x][y], (cWhite == 0));
+                                    pawn10.setMoved((cMoved == 1));
+                                    pawn10.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 10:
+                                    Pawn pawn11 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn11, tiles[x][y], (cWhite == 0));
+                                    pawn11.setMoved((cMoved == 1));
+                                    pawn11.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 11:
+                                    Pawn pawn12 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn12, tiles[x][y], (cWhite == 0));
+                                    pawn12.setMoved((cMoved == 1));
+                                    pawn12.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 12:
+                                    Pawn pawn13 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn13, tiles[x][y], (cWhite == 0));
+                                    pawn13.setMoved((cMoved == 1));
+                                    pawn13.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 13:
+                                    Pawn pawn14 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn14, tiles[x][y], (cWhite == 0));
+                                    pawn14.setMoved((cMoved == 1));
+                                    pawn14.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 14:
+                                    Pawn pawn15 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn15, tiles[x][y], (cWhite == 0));
+                                    pawn15.setMoved((cMoved == 1));
+                                    pawn15.setEnPassant((cExtra == 1));
+                                    pawnCounter++;
+                                    break pSw;
+                                case 15:
+                                    Pawn pawn16 = new Pawn((cWhite == 1),false,tiles[x][y]);
+                                    createAndAddPiece(pawn16, tiles[x][y], (cWhite == 0));
+                                    pawn16.setMoved((cMoved == 1));
+                                    pawn16.setEnPassant((cExtra == 1));
                                     break pSw;
                             }
                     }
@@ -662,7 +770,7 @@ public class Board {
                 // Lade den Verlauf
                 String afterHash = fileContent.substring(fileContent.indexOf("#") + 1);
                 String rTxtA = afterHash.substring(0, afterHash.indexOf("~"));
-                txtA.setText(rTxtA + "\n");
+                txtA.setText(rTxtA);
 
                 // Aktualisiere vCounter
                 String vcIntegerPart = fileContent.substring(fileContent.indexOf("~") + 1);

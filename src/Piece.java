@@ -361,6 +361,10 @@ public abstract class Piece {
         return moved;
     }
 
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
+
     protected static boolean isValidMove(int x, int y) {
         if (x < 8 && x > -1 && y < 8 && y > -1) {
             if (Board.tiles[x][y].getOccupyingPiece() != null) {
