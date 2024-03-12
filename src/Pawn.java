@@ -15,6 +15,7 @@ public class Pawn extends Piece {
     }
 
     @Override
+    // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
         if (!isMoved()) {
             // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
@@ -73,7 +74,7 @@ public class Pawn extends Piece {
         }
     }
 
-    // erzeugt, wenn möglich killButtons an Positionen die der Bauer schlagen kann
+    // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
     public void tryKill(int x, int y) {
         for (int i : new int[]{-1, 1}) {
             int newX = x + i;
@@ -93,6 +94,7 @@ public class Pawn extends Piece {
         }
     }
 
+    // erzeugt, wenn möglich enPassantButton an Position, die der Bauer schlagen kann
     public void checkEnPassant(int x, int y) {
         for (int i : new int[]{-1, 1}) {
             int newX = x + i;
@@ -173,25 +175,30 @@ public class Pawn extends Piece {
         }
     }
 
+    // getter für enPassant
     public boolean isEnPassant() {
         return enPassant;
     }
 
+    // setter für enPassant
     public void setEnPassant(boolean enPassant) {
         this.enPassant = enPassant;
     }
 
     @Override
+    // getter für den Namen der Klasse
     public String getClassName() {
         return "Bauer";
     }
 
     @Override
+    // getter für das Icon je nach Farbe
     protected ImageIcon getIconPath () {
         return new ImageIcon(isWhite() ? "src/pics/PawnWhite.png" : "src/pics/PawnBlack.png");
     }
 
     @Override
+    // getter für das KillIcon je nach Farbe
     protected ImageIcon getKillIconPath(boolean white){
         return new ImageIcon(white ? "src/pics/KillTargetIcons/PawnWhiteKill.png" : "src/pics/KillTargetIcons/PawnBlackKill.png");
     }

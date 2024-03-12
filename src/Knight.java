@@ -7,6 +7,7 @@ public class Knight extends Piece {
     }
 
     @Override
+    // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
         for (int i = -1; i <= 1; i += 2) {
             //Unten
@@ -29,6 +30,7 @@ public class Knight extends Piece {
         }
     }
 
+    // prüft, ob auf einem Feld eine gegnerische Figur ist
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
             if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
@@ -42,6 +44,7 @@ public class Knight extends Piece {
         }
     }
 
+    // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
@@ -58,6 +61,7 @@ public class Knight extends Piece {
         }
     }
 
+    // Methode zum Erzeugen von FieldButtons
     private void moveLogic(int newX, int newY){
         if (isValidMove(newX, newY)){
             Tile newTile = Board.tiles[newX][newY];
@@ -69,15 +73,18 @@ public class Knight extends Piece {
     }
 
     @Override
+    // getter für den Namen der Klasse
     public String getClassName() {
         return "Springer";
     }
 
     @Override
+    // getter für das Icon je nach Farbe
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KnightWhite.png" : "src/pics/KnightBlack.png");
     }
     @Override
+    // getter für das KillIcon je nach Farbe
     protected ImageIcon getKillIconPath(boolean white){
         return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/KnightWhiteKill.png" : "src/pics/KillTargetIcons/KnightBlackKill.png");
     }

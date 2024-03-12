@@ -9,10 +9,8 @@ public class King extends Piece {
     public boolean castled = false;
 
     @Override
+    // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
-        if (!isMoved()){
-
-        }
         //Oben
         Tile currentTile = getPosition();
         int newX = currentTile.getX();
@@ -48,6 +46,7 @@ public class King extends Piece {
         moveLogic(newX,newY);
     }
 
+    // prüft, ob auf einem Feld eine gegnerische Figur ist
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
             if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
@@ -61,6 +60,7 @@ public class King extends Piece {
         }
     }
 
+    // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
@@ -77,6 +77,7 @@ public class King extends Piece {
         }
     }
 
+    // Methode zum Erzeugen von FieldButtons
     private void moveLogic(int newX, int newY){
         if (isValidMove(newX, newY)){
             Tile newTile = Board.tiles[newX][newY];
@@ -88,24 +89,27 @@ public class King extends Piece {
         }
     }
 
+    // getter für, ob der König schon gecastled wurde
     public boolean isCastled() {
         return castled;
     }
 
+    // setter für, ob der König schon gecastled wurde
     public void setCastled(boolean castled) {
         this.castled = castled;
     }
 
+    // Methode zum castlen
     public void castle(Tile rookTile) {
-        // Check conditions for castling
+        // prüft die bedingungen zum castlen
         if (!isMoved() && !rookTile.getOccupyingPiece().isMoved()) {
-            // Check if there are no pieces between the king and the rook
+            // prüft, ob keine Figuren zwischen dem König und Turm sind
             for (int direction = -1; direction <= 1; direction += 2) {
-                int startTile = getPosition().getX() + direction; // Is used for Rook Endpos
+                int startTile = getPosition().getX() + direction; // Endposition des Turms
                 int destTile = getPosition().getX() + 2*direction;
                 boolean piecesBetween = false;
                 int pTile = startTile;
-                // Check for Pieces between Rook and King; if true, break
+                // Prüft, ob Figuren zwischen Turm und König liegen; wenn ja, break
                 while (pTile != rookTile.getX()){
                      if (Board.tiles[pTile][getPosition().getY()].getOccupyingPiece() != null) {
                         piecesBetween = true;
@@ -114,7 +118,7 @@ public class King extends Piece {
                      pTile += direction;
                 }
                 if (!piecesBetween) {
-                        // Display the castling option button
+                        // erzeugt einen castleButton, wenn erlaubt
                         JButton castleButton = createCastleButton(Board.tiles[destTile][getPosition().getY()]);
                         if (Board.tiles[destTile][getPosition().getY()].getpTile().getComponentCount() > 0) {
                             Board.tiles[destTile][getPosition().getY()].getpTile().remove(0);
@@ -125,19 +129,22 @@ public class King extends Piece {
 
                 }
             }
-            }
+        }
     }
 
     @Override
+    // getter für den Namen der Klasse
     public String getClassName() {
         return "König";
     }
 
     @Override
+    // getter für das Icon je nach Farbe
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/KingWhite.png" : "src/pics/KingBlack.png");
     }
     @Override
+    // getter für das KillIcon je nach Farbe
     protected ImageIcon getKillIconPath(boolean white){
         return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/KingWhiteKill.png" : "src/pics/KillTargetIcons/KingBlackKill.png");
     }

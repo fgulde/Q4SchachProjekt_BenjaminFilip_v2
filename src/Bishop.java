@@ -7,11 +7,12 @@ public class Bishop extends Piece {
     }
 
     @Override
+    // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
         //Oben-Rechts
         Tile currentTile = getPosition();
-        int newX = currentTile.getX();
-        int newY = currentTile.getY();
+        int newX;
+        int newY;
         for (int i = 1; i < 8; i++) {
             newY = currentTile.getY() + i;
             newX = currentTile.getX() + i;
@@ -65,6 +66,7 @@ public class Bishop extends Piece {
         }
     }
 
+    // prüft, ob auf einem Feld eine gegnerische Figur ist
     private boolean canKill(int x, int y) {
         if (Board.tiles[x][y].getOccupyingPiece() != null){
             if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
@@ -78,6 +80,7 @@ public class Bishop extends Piece {
         }
     }
 
+    // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
@@ -94,6 +97,7 @@ public class Bishop extends Piece {
         }
     }
 
+    // Methode zum Erzeugen von FieldButtons
     private void moveLogic(int newX, int newY){
         Tile newTile = Board.tiles[newX][newY];
         JButton newButton = createFieldButton(newTile);
@@ -102,16 +106,19 @@ public class Bishop extends Piece {
     }
 
     @Override
+    // getter für den Namen der Klasse
     public String getClassName() {
         return "Läufer";
     }
 
     @Override
+    // getter für das Icon je nach Farbe
     protected ImageIcon getIconPath() {
         return new ImageIcon(isWhite() ? "src/pics/BishopWhite.png" : "src/pics/BishopBlack.png");
     }
 
     @Override
+    // getter für das KillIcon je nach Farbe
     protected ImageIcon getKillIconPath(boolean white){
         return new ImageIcon(isWhite() ? "src/pics/KillTargetIcons/BishopWhiteKill.png" : "src/pics/KillTargetIcons/BishopBlackKill.png");
     }
