@@ -66,37 +66,6 @@ public class Bishop extends Piece {
         }
     }
 
-    // prüft, ob auf einem Feld eine gegnerische Figur ist
-    private boolean canKill(int x, int y) {
-        if (Board.tiles[x][y].getOccupyingPiece() != null){
-            if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
-                    || (!Board.tiles[x][y].getOccupyingPiece().isWhite() && !isWhite())) {
-                return false;
-            } else {
-                return x < 8 && y < 8;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
-    public void tryKill(int x, int y) {
-        if (x >= 0 && x < 8 && canKill(x, y)) {
-            Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
-            tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-            tempPieces[tempPieces.length - 1] = tempPiece;
-
-            JButton newButton = createKillButton(Board.tiles[x][y]);
-            newButton.setSelected(true);
-            newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
-
-            Board.tiles[x][y].getpTile().remove(0);
-            Board.tiles[x][y].getpTile().add(newButton);
-            Board.tiles[x][y].getpTile().updateUI();
-        }
-    }
-
     // Methode zum Erzeugen von FieldButtons
     private void moveLogic(int newX, int newY){
         Tile newTile = Board.tiles[newX][newY];

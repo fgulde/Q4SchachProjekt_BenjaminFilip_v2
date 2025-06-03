@@ -11,8 +11,13 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 
 
 public class Board {
@@ -30,6 +35,11 @@ public class Board {
     public static int vCounter = 1; // Zähler vom Spielzug
     public static GameStatus status = GameStatus.WHITEMOVE; // Status (für Spiellogik)
     public static JLabel lStatus = new JLabel(status.toString()); // Anzeige von Status
+    public static boolean kingInCheck = false; // "globale" Variable, für ob König im Schach steht
+    public static ArrayList<Tile> tempFieldButtonsDefender = new ArrayList<>(); //Liste für den König verteidigende Figuren
+    public static ArrayList<Tile> tempFieldButtonsAttacker = new ArrayList<>(); //Liste für den König angreifende Figuren
+    public static ArrayList<Tile> tempKillButtons = new ArrayList<>(); //Liste für Buttons, die von getKillButtons() erzeugt wurden
+
 
     public Board() {
         createBoard();
@@ -299,6 +309,7 @@ public class Board {
 
     // Ändert, welche Farbe gerade anklickbar ist (wird nach einem Zug ausgeführt)
     public static void changeButtonsEnabled(boolean white){
+        Piece.dangerousPieces.clear();
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 JButton button = Board.tiles[x][y].getButton();
@@ -845,5 +856,72 @@ public class Board {
     // Setter für Status
     public static void setStatus(GameStatus status) {
         Board.status = status;
+    }
+
+    public static void getFieldButtons(boolean isDefender) {
+        ArrayList<Tile> targetList = isDefender ? tempFieldButtonsDefender : tempFieldButtonsAttacker;
+        targetList.clear();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                    Component c = Board.tiles[i][j].getpTile().getComponent(k);
+                    if (c instanceof JButton && ((JButton) c).isSelected() && !((JButton) c).getIcon().toString().contains("Kill")) {
+                        targetList.add(Board.tiles[i][j]);
+                    }
+                }
+            }
+        }
+        Piece.removeFieldButtons();
+        Piece.resetAllTempPieces();
+    }
+
+    public static void getKillButtons() {
+        ArrayList<Tile> targetList = tempKillButtons;
+        targetList.clear();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                    Component c = Board.tiles[i][j].getpTile().getComponent(k);
+                    if (c instanceof JButton && ((JButton) c).isSelected() && ((JButton) c).getIcon().toString().contains("Kill")) {
+                        targetList.add(Board.tiles[i][j]);
+                    }
+                }
+            }
+        }
+        Piece.removeFieldButtons();
+        Piece.resetAllTempPieces();
+    }
+
+    private static DocumentFilter frozenFilter = new DocumentFilter() {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                throws BadLocationException {}
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length)
+                throws BadLocationException {}
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                throws BadLocationException {}
+    };
+
+    public static void freezeTextArea() {
+        AbstractDocument document = (AbstractDocument) txtA.getDocument();
+        document.setDocumentFilter(frozenFilter);
+    }
+
+    public static void unfreezeTextArea() {
+        AbstractDocument document = (AbstractDocument) txtA.getDocument();
+        document.setDocumentFilter(null);
+    }
+
+
+    public static boolean isKingInCheck() {
+        return kingInCheck;
+    }
+
+    public static void setKingInCheck(boolean new_kingInCheck) {
+        kingInCheck = new_kingInCheck;
     }
 }

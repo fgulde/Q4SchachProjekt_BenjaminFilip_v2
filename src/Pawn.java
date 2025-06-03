@@ -60,20 +60,7 @@ public class Pawn extends Piece {
         }
     }
 
-    // prüft, ob auf einem Feld eine gegnerische Figur ist
-    private boolean canKill(int x, int y) {
-        if (Board.tiles[x][y].getOccupyingPiece() != null){
-            if ((Board.tiles[x][y].getOccupyingPiece().isWhite() && isWhite())
-                    || (!Board.tiles[x][y].getOccupyingPiece().isWhite() && !isWhite())) {
-                return false;
-            } else {
-                return x < 8 && y < 8;
-            }
-        } else {
-            return false;
-        }
-    }
-
+    @Override
     // erzeugt, wenn möglich killButtons an Positionen, die die Figur schlagen kann
     public void tryKill(int x, int y) {
         for (int i : new int[]{-1, 1}) {
@@ -93,6 +80,7 @@ public class Pawn extends Piece {
             }
         }
     }
+
 
     // erzeugt, wenn möglich enPassantButton an Position, die der Bauer schlagen kann
     public void checkEnPassant(int x, int y) {
