@@ -1,9 +1,5 @@
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
@@ -67,16 +63,9 @@ public class Pawn extends Piece {
             int newX = x + i;
             if (newX < 8 && newX >= 0 && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-                tempPieces[tempPieces.length - 1] = tempPiece;
+                tempPieces.add(tempPiece);
 
-                JButton newButton = createKillButton(Board.tiles[newX][y]);
-                newButton.setSelected(true);
-                newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
-
-                Board.tiles[newX][y].getpTile().remove(0);
-                Board.tiles[newX][y].getpTile().add(newButton);
-                Board.tiles[newX][y].getpTile().updateUI();
+                spawnKillButton(Board.tiles[newX][y], tempPiece);
             }
         }
     }
@@ -127,15 +116,7 @@ public class Pawn extends Piece {
 
                 // Soundeffekt
                 String promotionSfx = "src/sfx/promotion.wav";
-                try {
-                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(promotionSfx));
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(ais);
-                    clip.setFramePosition(0);
-                    clip.start();
-                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                }
+                PieceActionListener.audioPlay(promotionSfx);
 
                 // Ausgewähltes Piece erzeugen
                 Piece promotedPiece = switch (choice) {

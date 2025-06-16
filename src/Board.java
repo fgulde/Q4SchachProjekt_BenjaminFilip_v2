@@ -1,4 +1,3 @@
-import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
 
 
 public class Board {
@@ -75,12 +73,8 @@ public class Board {
         gc.anchor = GridBagConstraints.LINE_START;
         innerGUI.add(numberRow, gc);
 
-        // Erstellt Letter-Row 1
-        for (int c = 97; c < 105; c++) {
-            JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
-            lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
-            letterRow.add(lLetter);
-        }
+        createLetterRow(letterRow);
+        
         // Erstellt Number-Row 1
         for (int i = 8; i > 0; i--) {
             JLabel lNumber = new JLabel(" " + i + " ");
@@ -106,12 +100,8 @@ public class Board {
         gc.anchor = GridBagConstraints.LINE_END;
         innerGUI.add(numberRow1, gc);
 
-        // Erstellt Letter-Row 2
-        for (int c = 97; c < 105; c++) {
-            JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
-            lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
-            letterRow1.add(lLetter);
-        }
+        createLetterRow(letterRow1);
+        
         // Erstellt Number-Row 2
         for (int i = 8; i > 0; i--) {
             JLabel lNumber = new JLabel(" " + i + "       ");
@@ -196,24 +186,7 @@ public class Board {
          */
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
-                JPanel pTile = new JPanel(new GridBagLayout());
-
-                pTile.setName(String.valueOf(x+y));
-                boolean tWhite;
-
-                /*
-                Berechnet, ob das Feld Weiß oder Schwarz sein muss. Wenn die Summe der Koordinaten eine gerade Zahl ist,
-                d. h. Rest = 0, dann ist es weiß, ist die Summe der Koordinaten eine ungerade Zahl, d. h. Rest = 1, dann
-                ist es schwarz.
-                 */
-                if ((x + y) % 2 == 0){
-                    pTile.setBackground(new Color(255, 206, 158));
-                    tWhite = true;
-                }
-                else{
-                    pTile.setBackground(new Color(209,139,71));
-                    tWhite = false;
-                }
+                JPanel pTile = getJPanel(x, y);
 
                 tiles[x][y] = new Tile(x, y, pTile);
 
@@ -226,6 +199,25 @@ public class Board {
                 chessBoard.add(tiles[x][y].getpTile());
             }
         }
+    }
+
+    private static JPanel getJPanel(int x, int y) {
+        JPanel pTile = new JPanel(new GridBagLayout());
+
+        pTile.setName(String.valueOf(x + y));
+
+                /*
+                Berechnet, ob das Feld Weiß oder Schwarz sein muss. Wenn die Summe der Koordinaten eine gerade Zahl ist,
+                d. h. Rest = 0, dann ist es weiß, ist die Summe der Koordinaten eine ungerade Zahl, d. h. Rest = 1, dann
+                ist es schwarz.
+                 */
+        if ((x + y) % 2 == 0){
+            pTile.setBackground(new Color(255, 206, 158));
+        }
+        else{
+            pTile.setBackground(new Color(209,139,71));
+        }
+        return pTile;
     }
 
     // Methode wird beim Erstellen vom Board oder beim Laden von Spielständen genutzt, um Zeit zu sparen
@@ -244,15 +236,7 @@ public class Board {
     public static void initializeBoard() {
         // Soundeffekt
         String startSfx = "src/sfx/start.wav";
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
-            Clip clip = AudioSystem.getClip();
-            clip.open(ais);
-            clip.setFramePosition(0);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-            throw new RuntimeException(ex);
-        }
+        Piece.PieceActionListener.audioPlay(startSfx);
 
         // Fügt alle Spielfiguren an ihren Startpositionen hinzu
         for (int x = 0; x < 8; x++) {
@@ -354,21 +338,25 @@ public class Board {
                 "WARNUNG", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon("src/pics/Warning.png")) == JOptionPane.YES_OPTION) {
                         // Entfernt alle Buttons
-                        for (int i = 0; i < 8; i++) {
-                            for (int j = 0; j < 8; j++) {
-                                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
-                                    Board.tiles[i][j].getpTile().remove(k);
-                                    Board.tiles[i][j].setOccupyingPiece(null);
-                                    Board.tiles[i][j].getpTile().updateUI();
-                                }
-                            }
-                        }
-                        // Erstellt alle Buttons neu, setzt Variablen auf Startzustand zurück
+                removeALLButtons();
+                // Erstellt alle Buttons neu, setzt Variablen auf Startzustand zurück
                         setStatus(GameStatus.WHITEMOVE);
                         Board.lStatus.setText(Board.status.toString());
                         initializeBoard();
                         vCounter = 1;
                         txtA.setText("");
+            }
+        }
+
+        public static void removeALLButtons() {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
+                        Board.tiles[i][j].getpTile().remove(k);
+                        Board.tiles[i][j].setOccupyingPiece(null);
+                        Board.tiles[i][j].getpTile().updateUI();
+                    }
+                }
             }
         }
     }
@@ -486,7 +474,7 @@ public class Board {
                     writer.print(saveFile);
                     writer.close();
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Fehler beim Speichern der Datei:\n" + e.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -517,15 +505,7 @@ public class Board {
                 }
 
                 // Entfernt alle Buttons auf dem Feld
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
-                            Board.tiles[i][j].getpTile().remove(k);
-                            Board.tiles[i][j].setOccupyingPiece(null);
-                            Board.tiles[i][j].getpTile().updateUI();
-                        }
-                    }
-                }
+                NewGameButtonListener.removeALLButtons();
 
                 // Liest die Pieces aus und erstellt diese
                 int sStart = fileContent.indexOf('?');
@@ -537,15 +517,7 @@ public class Board {
 
                 //Soundeffekt
                 String startSfx = "src/sfx/start.wav";
-                try {
-                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(startSfx));
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(ais);
-                    clip.setFramePosition(0);
-                    clip.start();
-                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                }
+                Piece.PieceActionListener.audioPlay(startSfx);
 
                 // Zählt wie viele Pieces es von einer Sorte bereits gibt
                 int bishopCounter = 0;
@@ -891,19 +863,25 @@ public class Board {
         Piece.removeFieldButtons();
         Piece.resetAllTempPieces();
     }
+    
+    public void createLetterRow(JPanel letterRow) {
+        // Erstellt Letter-Row 1
+        for (int c = 97; c < 105; c++) {
+            JLabel lLetter = new JLabel((char) c + " ", SwingConstants.CENTER);
+            lLetter.setFont(new Font("Arial", Font.PLAIN, 20));
+            letterRow.add(lLetter);
+        }
+    }
 
-    private static DocumentFilter frozenFilter = new DocumentFilter() {
+    private static final DocumentFilter frozenFilter = new DocumentFilter() {
         @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-                throws BadLocationException {}
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) {}
 
         @Override
-        public void remove(FilterBypass fb, int offset, int length)
-                throws BadLocationException {}
+        public void remove(FilterBypass fb, int offset, int length) {}
 
         @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                throws BadLocationException {}
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) {}
     };
 
     public static void freezeTextArea() {

@@ -1,20 +1,18 @@
 import javax.sound.sampled.*;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class Piece {
     private final boolean white; // gibt an, ob die Figur weiß ist oder nicht
     public Tile position; // tile auf dem sich die Figur befindet
     private boolean moved = false; // boolean gibt an, ob die Figur schon bewegt wurde
-    public static Piece[] tempPieces; // Zwischenspeicher für die kill-Methode
+    public static ArrayList<Piece> tempPieces = new ArrayList<>(); // Zwischenspeicher für die kill-Methode
     public static ArrayList<Piece> dangerousPieces = new ArrayList<>(); // Zwischenspeicher für Figuren die King bedrohen
     public static ArrayList<Tile> almostSaviourTiles = new ArrayList<>(); // Zwischenspeicher für Tiles, die vom Verteidiger mit dem Angreifer geshared werden
     public static ArrayList<Tile> saviourTiles = new ArrayList<>(); // Speicher für Tiles, auf denen die Figur den König verteidigen kann
@@ -23,7 +21,6 @@ public abstract class Piece {
     public Piece(boolean white, Tile position) {
         this.white = white;
         this.position = position;
-        tempPieces = new Piece[0];  // Füge diese Zeile hinzu, um das Array zu initialisieren.
     }
 
     // getter für das tile auf dem sich die Figur befindet
@@ -62,16 +59,9 @@ public abstract class Piece {
     public void tryKill(int x, int y) {
         if (x >= 0 && x < 8 && canKill(x, y)) {
             Piece tempPiece = Board.tiles[x][y].getOccupyingPiece();
-            tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-            tempPieces[tempPieces.length - 1] = tempPiece;
+            tempPieces.add(tempPiece);
 
-            JButton newButton = createKillButton(Board.tiles[x][y]);
-            newButton.setSelected(true);
-            newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
-
-            Board.tiles[x][y].getpTile().remove(0);
-            Board.tiles[x][y].getpTile().add(newButton);
-            Board.tiles[x][y].getpTile().updateUI();
+            spawnKillButton(Board.tiles[x][y], tempPiece);
         }
     }
 
@@ -98,8 +88,7 @@ public abstract class Piece {
             checkt, ob der Bauer zwei oder ein Feld nach vorne gegangen ist und setzt ihn, wenn ja, auf EnPassant-able
             isDefaultCapable() == false, wird zum Kennzeichnen von Buttons benutzt, die die EnPassant Regel aktivieren
          */
-        if (piece instanceof Pawn pawn && !Arrays.asList(tempPieces).contains(piece)
-        ){
+        if (piece instanceof Pawn pawn && !tempPieces.contains(piece)) {
             if (!Board.tiles[newX][newY].getButton().isDefaultCapable()) {
                 pawn.setEnPassant(true);
             } else if (Board.tiles[newX][newY].getButton().isDefaultCapable()) {
@@ -222,6 +211,17 @@ public abstract class Piece {
         return button;
     }
 
+    public void spawnKillButton(Tile tile, Piece piece) {
+        JButton newButton = createKillButton(tile);
+        newButton.setSelected(true);
+        newButton.setIcon(piece.getKillIconPath(piece.isWhite()));
+
+        tile.getpTile().remove(0);
+        tile.getpTile().add(newButton);
+        tile.getpTile().updateUI();
+
+    }
+
     // Erzeugt einen Button, der anzeigt, dass die Figur(König) castlen kann
     public JButton createCastleButton(Tile position) {
         JButton button = new JButton();
@@ -266,15 +266,7 @@ public abstract class Piece {
         public void actionPerformed(ActionEvent e) {
             // Soundeffekt
             String clickSfx = "src/sfx/click.wav";
-            try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(clickSfx));
-                Clip clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.setFramePosition(0);
-                clip.start();
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                throw new RuntimeException(ex);
-            }
+            audioPlay(clickSfx);
             // entfernt alle Buttons, die nur temporär sind, also keine Figuren und fügt gegebenenfalls durch killButtons entfernte Figuren wieder ein
             resetTempPieces(piece.getPosition());
             removeFieldButtons();
@@ -329,6 +321,18 @@ public abstract class Piece {
             checkCastleR(piece);
             checkCastleL(piece);
         }
+
+        public static void audioPlay(String clickSfx) {
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(clickSfx));
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                clip.setFramePosition(0);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     //ActionListener für Buttons zum Bewegen der Figur
@@ -345,15 +349,7 @@ public abstract class Piece {
         public void actionPerformed(ActionEvent e) {
             //Soundeffekt
             String moveSfx = "src/sfx/move.wav";
-            try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(moveSfx));
-                Clip clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.setFramePosition(0);
-                clip.start();
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                throw new RuntimeException(ex);
-            }
+            PieceActionListener.audioPlay(moveSfx);
 
             /*
                 Führt das castlen aus, wenn der gedrückte Button ein CastleButton ist
@@ -413,15 +409,7 @@ public abstract class Piece {
         // Soundeffekt beim Erstellen von GUIs. Wird so oft genutzt, dass sich eigene Methode anbot.
         public static void NotifySound() {
             String notifySfx = "src/sfx/notify.wav";
-            try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(notifySfx));
-                Clip clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.setFramePosition(0);
-                clip.start();
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                throw new RuntimeException(ex);
-            }
+            PieceActionListener.audioPlay(notifySfx);
         }
     }
 
@@ -464,30 +452,27 @@ public abstract class Piece {
         }
 
         // Nach dem Zurücksetzen leere das tempPieces-Array
-        tempPieces = new Piece[0];
+        tempPieces.clear();
     }
 
     // setzt nur den KillButton zurück, der an derselben Stelle wie destination ist
     public static void resetThisTempPiece(Tile destination) {
+        Piece piece = null;
         for (Piece tempPiece : tempPieces) {
-            if (tempPiece != null) {
-
+            if (tempPiece != null && tempPiece.getPosition() == destination) {
+                piece = tempPiece;
                 Tile originalTile = tempPiece.getPosition();
+                originalTile.setOccupyingPiece(tempPiece);
 
-                if (originalTile.getpTile() == destination.getpTile()) {
-
-                    originalTile.setOccupyingPiece(tempPiece);
-
-                    JButton button = tempPiece.createPieceButton();
-                    originalTile.getpTile().remove(0);
-                    originalTile.getpTile().add(button);
-                    originalTile.getpTile().updateUI();
-                }
+                JButton button = tempPiece.createPieceButton();
+                originalTile.getpTile().remove(0);
+                originalTile.getpTile().add(button);
+                originalTile.getpTile().updateUI();
+                button.setEnabled(false);
+                button.setDisabledIcon(tempPiece.getIconPath());
             }
         }
-
-        // Nach dem Zurücksetzen leere das tempPieces-Array
-        tempPieces = new Piece[0];
+        tempPieces.remove(piece);
     }
 
     // fährt das tempPieces-Array jedes Tiles ab und erzeugt an den richtigen Stellen die durch die tryKill()-Methode entfernten
@@ -512,76 +497,69 @@ public abstract class Piece {
             }
         }
         // Clear the tempPieces array after processing
-        tempPieces = new Piece[0];
+        tempPieces.clear();
     }
 
-    //Schaut, ob King im Check steht
-    public static boolean CheckCheck(boolean isWhite){
-        Tile kingTile = null;
-        Piece kingPiece = null;
-        //nach King suchen
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Piece piece = Board.tiles[x][y].getOccupyingPiece();
-                if (piece != null && piece instanceof King && piece.isWhite() == isWhite){
-                    kingTile = piece.getPosition();
-                    kingPiece = piece;
-                    break;
-                }
-            }
-        }
-
-        Icon kingIcon = kingPiece.getKillIconPath(isWhite);
-
-        for (int m = 0; m < 8; m++){
-            for (int n = 0; n < 8; n++) {
-                Piece piece = Board.tiles[m][n].getOccupyingPiece();
-                if (piece != null && piece.isWhite() != isWhite){
-                    piece.calculateNewPos();
-                    for (int i = 0; i < 8; i++) {
-                        for (int j = 0; j < 8; j++){
-                            if (Board.tiles[i][j].getpTile() == Board.tiles[kingTile.getX()][kingTile.getY()].getpTile()) {
-                                for (int k = 0; k < Board.tiles[i][j].getpTile().getComponents().length; k++) {
-                                    Component c = Board.tiles[i][j].getpTile().getComponent(k);
-                                    if (c instanceof JButton){
-                                        if(Objects.equals(((JButton) c).getIcon().toString(), kingIcon.toString())){
-                                            //array mit allen gegnerischen Figuren die killButtons auf kingTile erzeugen
-                                            if (!dangerousPieces.contains(piece)){
-                                                dangerousPieces.add(piece);
-                                            }
-                                            resetAllTempPieces();
-                                            removeFieldButtons();
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    resetAllTempPieces();
-                    removeFieldButtons();
-                }
-            }
-        }
-        return false;
-    }
-
-    public static boolean stillGeneratingKillButton(Piece currentPiece){
-        Tile kingTile = null;
-
-        //nach King suchen
+    public static Piece findKingOfActivePieces() {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 Piece piece = Board.tiles[x][y].getOccupyingPiece();
                 if (piece instanceof King){
                     if (piece.isWhite() && Board.status.equals(GameStatus.WHITEMOVE)) {
-                            kingTile = piece.getPosition();
+                        return piece; // Return the King piece if it's the right color
                     } else if (!piece.isWhite() && Board.status.equals(GameStatus.BLACKMOVE)) {
-                            kingTile = piece.getPosition();
+                        return piece;
                     }
                 }
             }
         }
+        throw new IllegalStateException("No active King found on the board!");
+    }
+
+    //Schaut, ob King im Check steht
+    public static boolean CheckCheck(boolean isWhite) {
+        Piece kingPiece = findKingOfActivePieces();
+        Tile kingTile = kingPiece.getPosition();
+        Icon kingIcon = kingPiece.getKillIconPath(isWhite);
+        boolean check = false;
+
+        for (int m = 0; m < 8; m++) {
+            for (int n = 0; n < 8; n++) {
+                Piece piece = Board.tiles[m][n].getOccupyingPiece();
+                if (piece == null || piece.isWhite() == isWhite) continue;
+
+                piece.calculateNewPos();
+
+                if (isKingThreatenedOnTile(kingTile, kingIcon)) {
+                    if (!dangerousPieces.contains(piece)) {
+                        dangerousPieces.add(piece);
+                    }
+                    resetAllTempPieces();
+                    removeFieldButtons();
+                    check = true;
+                }
+
+                resetAllTempPieces();
+                removeFieldButtons();
+            }
+        }
+        return check;
+    }
+
+    private static boolean isKingThreatenedOnTile(Tile kingTile, Icon kingIcon) {
+        JPanel kingPanel = Board.tiles[kingTile.getX()][kingTile.getY()].getpTile();
+        for (Component c : kingPanel.getComponents()) {
+            if (c instanceof JButton button) {
+                if (Objects.equals(button.getIcon().toString(), kingIcon.toString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean stillGeneratingKillButton(Piece currentPiece){
+        Tile kingTile = findKingOfActivePieces().getPosition();
 
         if (currentPiece != null){
             currentPiece.calculateNewPos();
@@ -600,49 +578,94 @@ public abstract class Piece {
     //fährt array aus CheckCheck() ab und schaut ob eigene Figur Pfade erzeugt, die die Pfade der Angreifer durchkreuzen oder den Angreifer schlagen könnten
     public void chucklesImInDanger(Piece currentPiece){
         almostSaviourTiles.clear();
-        Tile currentPieceTile = currentPiece.getPosition();
 
         for (Piece dangerousPiece : dangerousPieces) {
             if (currentPiece.isWhite() != dangerousPiece.isWhite()){
-                currentPiece.calculateNewPos();
-                Board.getFieldButtons(true);
-                dangerousPiece.calculateNewPos();
-                Board.getFieldButtons(false);
-                dangerousPiece.calculateNewPos();
-                Board.getKillButtons();
-
-                for (Tile fieldButtonAttacker : Board.tempFieldButtonsAttacker){
-                    for (Tile fieldButtonDefender : Board.tempFieldButtonsDefender){
-                        if ((fieldButtonDefender.getX() == fieldButtonAttacker.getX()) && (fieldButtonDefender.getY() == fieldButtonAttacker.getY())){
-                            almostSaviourTiles.add(fieldButtonDefender);
-                        }
-                    }
+                fillTempArrays_Check(currentPiece, dangerousPiece);
+                findCrossingTiles_Check(false);
+                // Entfernt die nonSaviourTiles aus saviourTiles, da sie keine saviourTiles sind
+                for (Tile nonSaviourTile : nonSaviourTiles) {
+                    saviourTiles.remove(nonSaviourTile);
                 }
-
-                for (Tile almostSaviourTile : almostSaviourTiles){
-                    tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-                    tempPieces[tempPieces.length - 1] = currentPiece;
-                    Piece tempPiece = new Pawn(!currentPiece.isWhite(), almostSaviourTile);
-                    almostSaviourTile.setOccupyingPiece(tempPiece);
-                    if (!stillGeneratingKillButton(dangerousPiece)){
-                        saviourTiles.add(almostSaviourTile);
-                    }else {
-                        nonSaviourTiles.add(almostSaviourTile);
-                    }
-                    almostSaviourTile.setOccupyingPiece(null);
-                    resetTempPieces(currentPieceTile);
-                }
-
-                for (Tile killButtonTile : Board.tempKillButtons){
-                    if (killButtonTile == dangerousPiece.getPosition()){
-                        saviourTiles.add(killButtonTile); // muss noch geprüft werden, ob das wirklich das schach verhindert
-                    }
-                }
+                // wenn mehr als ein gefährliches Piece existiert, bringt das Killen von einem ja nichts
+                if (dangerousPieces.size() == 1)
+                    findKillableTiles_Check(dangerousPiece);
+                validateAlmostSaviourTilesArray_Check(currentPiece, dangerousPiece);
             }
         }
 
         resetAllTempPieces();
         removeFieldButtons();
+    }
+
+    // Füllt die temporären Arrays mit den möglichen neuen Positionen der aktuellen und der gefährlichen Figur und den Kill-Buttons, die currentPiece generieren kann
+    public void fillTempArrays_Check(Piece currentPiece, Piece dangerousPiece) {
+        currentPiece.calculateNewPos();
+        Board.getFieldButtons(true);
+        dangerousPiece.calculateNewPos();
+        Board.getFieldButtons(false);
+        currentPiece.calculateNewPos();
+        Board.getKillButtons();
+    }
+
+    // Findet die FieldButtonTiles, die currentPiece und dangerousPiece gemeinsam haben
+    public void findCrossingTiles_Check(boolean pieceIsKing) {
+        for (Tile defenderTile : Board.tempFieldButtonsDefender) {
+
+            boolean inAttacker = Board.tempFieldButtonsAttacker.contains(defenderTile);
+            boolean inAlmostSaviour = almostSaviourTiles.contains(defenderTile);
+            boolean inNonSaviour = nonSaviourTiles.contains(defenderTile);
+
+            // Wenn das Feld in nonSaviourTiles ist, entferne es aus almostSaviourTiles
+            if (inNonSaviour) {
+                almostSaviourTiles.remove(defenderTile);
+                continue;
+            }
+
+            // Wenn es weder in almost- noch nonSaviour ist
+            if (!inAlmostSaviour) {
+                if ((pieceIsKing && !inAttacker) || (!pieceIsKing && inAttacker)) {
+                    almostSaviourTiles.add(defenderTile);
+                } else {
+                    nonSaviourTiles.add(defenderTile);
+                }
+            }
+        }
+    }
+
+
+    // Findet die Kill-Buttons, welche von currentPiece generiert wurden, die die gefährliche Figur schlagen können
+    public void findKillableTiles_Check(Piece dangerousPiece){
+        for (Tile killButtonTile : Board.tempKillButtons){
+            if (killButtonTile == dangerousPiece.getPosition()){
+                for (Piece tempPiece : dangerousPieces) {
+                    if (tempPiece == dangerousPiece)
+                        continue;
+                    if (tempPiece != null && stillGeneratingKillButton(tempPiece))
+                        nonSaviourTiles.add(killButtonTile);
+                }
+                if (!nonSaviourTiles.contains(killButtonTile)){
+                    saviourTiles.add(killButtonTile); // muss noch geprüft werden, ob das wirklich das Schach verhindert
+                }
+            }
+        }
+
+    }
+
+    // Prüft, ob die Tiles von almostSaviourTiles, tatsächlich den König retten können
+    public void validateAlmostSaviourTilesArray_Check(Piece currentPiece, Piece dangerousPiece) {
+        for (Tile almostSaviourTile : almostSaviourTiles){
+            tempPieces.add(currentPiece);
+            Piece tempPiece = new Pawn(!currentPiece.isWhite(), almostSaviourTile);
+            almostSaviourTile.setOccupyingPiece(tempPiece);
+            if (!stillGeneratingKillButton(dangerousPiece)){
+                saviourTiles.add(almostSaviourTile);
+            }else {
+                nonSaviourTiles.add(almostSaviourTile);
+            }
+            almostSaviourTile.setOccupyingPiece(null);
+            resetTempPieces(currentPiece.getPosition());
+        }
     }
 
     public void safeTheKing(Piece currentPiece){
@@ -653,51 +676,44 @@ public abstract class Piece {
 
         for (Piece dangerousPiece : dangerousPieces) {
             if (currentPiece.isWhite() != dangerousPiece.isWhite()){
-                currentPiece.calculateNewPos();
-                Board.getFieldButtons(true);
-                dangerousPiece.calculateNewPos();
-                Board.getFieldButtons(false);
-
-                for (Tile fieldButtonDefender : Board.tempFieldButtonsDefender){
-                    if (!Board.tempFieldButtonsAttacker.contains(fieldButtonDefender)
-                            && !almostSaviourTiles.contains(fieldButtonDefender)
-                            && !nonSaviourTiles.contains(fieldButtonDefender))
-                    {
-                        almostSaviourTiles.add(fieldButtonDefender);
-                    }else if (nonSaviourTiles.contains(fieldButtonDefender)){
-                        almostSaviourTiles.remove(fieldButtonDefender);
-                    }else if (Board.tempFieldButtonsAttacker.contains(fieldButtonDefender) && !nonSaviourTiles.contains(fieldButtonDefender)){
-                        nonSaviourTiles.add(fieldButtonDefender);
-                    }
-                }
+                fillTempArrays_Check(currentPiece, dangerousPiece);
+                findCrossingTiles_Check(true);
 
                 // hier muss tatsächlich der König bewegt werden, glaube ich
                 for (Tile almostSaviourTile : almostSaviourTiles){
-                    tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-                    tempPieces[tempPieces.length - 1] = currentPiece;
-
-                    Board.freezeTextArea(); // freeze txtA so move is not recorded
-                    //move king to the temp position
-                    currentPiece.move(almostSaviourTile.getX(), almostSaviourTile.getY());
-                    Board.vCounter--; // decrease vCounter because it isnt frozen like txtA
-
-                    if (!stillGeneratingKillButton(dangerousPiece)){
-                        saviourTiles.add(almostSaviourTile);
-                    }else {
-                        nonSaviourTiles.add(almostSaviourTile);
-                        saviourTiles.remove(almostSaviourTile);
-                    }
-
-                    // move king back to his real position
-                    currentPiece.move(currentPieceTile.getX(), currentPieceTile.getY());
-                    Board.unfreezeTextArea(); // unfreeze txtA
-                    Board.vCounter--; // decrease vCounter because it isn't frozen like txtA
+                    tempMove(currentPiece, almostSaviourTile, currentPieceTile, () -> {
+                        if (!stillGeneratingKillButton(dangerousPiece)){
+                            saviourTiles.add(almostSaviourTile);
+                        }else {
+                            nonSaviourTiles.add(almostSaviourTile);
+                            saviourTiles.remove(almostSaviourTile);
+                        }
+                    });
                 }
             }
         }
 
         resetAllTempPieces();
         removeFieldButtons();
+    }
+
+    // temporarily move a piece to a new tile without updating the game state and between moving it somewhere and back
+    // executes a given method (actionBetweenMoves)
+    public void tempMove(Piece currentPiece, Tile tempTile, Tile originalTile, Runnable actionBetweenMoves) {
+
+        Board.freezeTextArea(); // freeze txtA so move is not recorded
+        //move king to the temp position
+        currentPiece.move(tempTile.getX(), tempTile.getY());
+        Board.vCounter--; // decrease vCounter because it isn't frozen like txtA
+
+        try {
+            actionBetweenMoves.run();
+        } finally {
+            // move piece back to his original position
+            currentPiece.move(originalTile.getX(), originalTile.getY());
+            Board.unfreezeTextArea(); // unfreeze txtA
+            Board.vCounter--; // decrease vCounter because it isn't frozen like txtA
+        }
     }
 
     public abstract String getClassName(); // Für ToolTips

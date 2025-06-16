@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.util.Arrays;
 
 public class King extends Piece {
     public King(boolean isWhite, Tile position) {
