@@ -559,7 +559,8 @@ public abstract class Piece {
     }
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean stillGeneratingKillButton(Piece currentPiece){
-        Tile kingTile = findKingOfActivePieces().getPosition();
+        Piece activeKing = findKingOfActivePieces();
+        Tile kingTile = activeKing.getPosition();
 
         if (currentPiece != null){
             currentPiece.calculateNewPos();
@@ -567,6 +568,26 @@ public abstract class Piece {
             for (Tile killButtonTile : Board.tempKillButtons){
                 if (killButtonTile == kingTile) {
                     return true;
+                }
+            }
+        }else {
+            // If no specific piece is given, check all enemy pieces
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    Piece piece = Board.tiles[x][y].getOccupyingPiece();
+                    if (piece != null && piece.isWhite() != activeKing.isWhite()) {
+                        piece.calculateNewPos();
+                        Board.getKillButtons();
+                        for (Tile killButtonTile : Board.tempKillButtons) {
+                            if (killButtonTile == kingTile) {
+                                resetAllTempPieces();
+                                removeFieldButtons();
+                                return true;
+                            }
+                        }
+                        resetAllTempPieces();
+                        removeFieldButtons();
+                    }
                 }
             }
         }
@@ -583,13 +604,7 @@ public abstract class Piece {
             if (currentPiece.isWhite() != dangerousPiece.isWhite()){
                 fillTempArrays_Check(currentPiece, dangerousPiece);
                 findCrossingTiles_Check(false);
-                // Entfernt die nonSaviourTiles aus saviourTiles, da sie keine saviourTiles sind
-                for (Tile nonSaviourTile : nonSaviourTiles) {
-                    saviourTiles.remove(nonSaviourTile);
-                }
-                // wenn mehr als ein gefährliches Piece existiert, bringt das Killen von einem ja nichts
-                if (dangerousPieces.size() == 1)
-                    findKillableTiles_Check(dangerousPiece);
+                findKillableTiles_Check(dangerousPiece);
                 validateAlmostSaviourTilesArray_Check(currentPiece, dangerousPiece);
             }
         }
@@ -636,35 +651,36 @@ public abstract class Piece {
 
     // Findet die Kill-Buttons, welche von currentPiece generiert wurden, die die gefährliche Figur schlagen können
     public void findKillableTiles_Check(Piece dangerousPiece){
-        for (Tile killButtonTile : Board.tempKillButtons){
-            if (killButtonTile == dangerousPiece.getPosition()){
-                for (Piece tempPiece : dangerousPieces) {
-                    if (tempPiece == dangerousPiece)
-                        continue;
-                    if (tempPiece != null && stillGeneratingKillButton(tempPiece))
-                        nonSaviourTiles.add(killButtonTile);
-                }
-                if (!nonSaviourTiles.contains(killButtonTile)){
-                    saviourTiles.add(killButtonTile); // muss noch geprüft werden, ob das wirklich das Schach verhindert
+        // wenn mehr als ein gefährliches Piece existiert, bringt das Killen von einem ja nichts
+        if (dangerousPieces.size() == 1) {
+            for (Tile killButtonTile : Board.tempKillButtons) {
+                if (killButtonTile == dangerousPiece.getPosition()) {
+                    for (Piece tempPiece : dangerousPieces) {
+                        if (tempPiece == dangerousPiece)
+                            continue;
+                        if (tempPiece != null && stillGeneratingKillButton(tempPiece))
+                            nonSaviourTiles.add(killButtonTile);
+                    }
+                    if (!nonSaviourTiles.contains(killButtonTile)) {
+                        saviourTiles.add(killButtonTile); //Muss nicht weiter geprüft werden, da es nur ein gefährliches Piece gibt
+                    }
                 }
             }
-        }
 
+        }
     }
 
     // Prüft, ob die Tiles von almostSaviourTiles, tatsächlich den König retten können
     public void validateAlmostSaviourTilesArray_Check(Piece currentPiece, Piece dangerousPiece) {
         for (Tile almostSaviourTile : almostSaviourTiles){
-            tempPieces.add(currentPiece);
-            Piece tempPiece = new Pawn(!currentPiece.isWhite(), almostSaviourTile);
-            almostSaviourTile.setOccupyingPiece(tempPiece);
-            if (!stillGeneratingKillButton(dangerousPiece)){
-                saviourTiles.add(almostSaviourTile);
-            }else {
-                nonSaviourTiles.add(almostSaviourTile);
-            }
-            almostSaviourTile.setOccupyingPiece(null);
-            resetTempPieces(currentPiece.getPosition());
+            tempMove(currentPiece, almostSaviourTile, currentPiece.getPosition(), () -> {
+                if (!stillGeneratingKillButton(null)){
+                    saviourTiles.add(almostSaviourTile);
+                }else {
+                    nonSaviourTiles.add(almostSaviourTile);
+                    saviourTiles.remove(almostSaviourTile);
+                }
+            });
         }
     }
 
@@ -672,24 +688,11 @@ public abstract class Piece {
         almostSaviourTiles.clear();
         saviourTiles.clear();
 
-        Tile currentPieceTile = currentPiece.getPosition();
-
         for (Piece dangerousPiece : dangerousPieces) {
             if (currentPiece.isWhite() != dangerousPiece.isWhite()){
                 fillTempArrays_Check(currentPiece, dangerousPiece);
                 findCrossingTiles_Check(true);
-
-                // hier muss tatsächlich der König bewegt werden, glaube ich
-                for (Tile almostSaviourTile : almostSaviourTiles){
-                    tempMove(currentPiece, almostSaviourTile, currentPieceTile, () -> {
-                        if (!stillGeneratingKillButton(dangerousPiece)){
-                            saviourTiles.add(almostSaviourTile);
-                        }else {
-                            nonSaviourTiles.add(almostSaviourTile);
-                            saviourTiles.remove(almostSaviourTile);
-                        }
-                    });
-                }
+                validateAlmostSaviourTilesArray_Check(currentPiece, dangerousPiece);
             }
         }
 
