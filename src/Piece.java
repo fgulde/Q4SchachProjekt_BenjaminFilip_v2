@@ -156,6 +156,23 @@ public abstract class Piece {
         } else return false;
     }
 
+    // Methode zum Erzeugen von FieldButtons
+    public boolean moveLogic(int newX, int newY) {
+        // Plan ist die Methoden aus den Subklassen zusammenzufassen und hier reinzupacken, da es an sich die selben Schritte überall sind, die nur verschiedenen in den subklassen verteilt sind
+        if (isValidMove(newX, newY)){
+            Tile newTile = Board.tiles[newX][newY];
+            JButton newButton = createFieldButton(newTile);
+            Board.tiles[newX][newY].getpTile().add(newButton);
+            Board.tiles[newX][newY].getpTile().updateUI();
+        } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
+            tryKill(newX,newY);
+            return true;
+        }else {
+            return true;
+        }
+        return false;
+    }
+
     /*-----------------------------------------Angriffs-/Schachlogik--------------------------------------------------*/
 
     // prüft, ob auf einem Feld eine gegnerische Figur ist
