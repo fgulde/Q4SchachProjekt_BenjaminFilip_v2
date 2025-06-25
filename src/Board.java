@@ -844,7 +844,7 @@ public class Board {
             }
         }
         Piece.removeFieldButtons();
-        Piece.resetAllTempPieces();
+        Piece.resetTempPieces(null, Piece.ResetMode.ALL);
     }
 
     public static void getKillButtons() {
@@ -861,7 +861,7 @@ public class Board {
             }
         }
         Piece.removeFieldButtons();
-        Piece.resetAllTempPieces();
+        Piece.resetTempPieces(null, Piece.ResetMode.ALL);
     }
     
     public void createLetterRow(JPanel letterRow) {
