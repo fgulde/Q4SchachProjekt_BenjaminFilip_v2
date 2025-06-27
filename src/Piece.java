@@ -150,7 +150,7 @@ public abstract class Piece {
     }
 
     // prüft, ob das jeweilige Feld im Board liegt und ob da nicht eine andere Figur schon drauf ist
-    protected static boolean isValidMove(int x, int y) {
+    protected static boolean isEmptyTile(int x, int y) {
         if (x < 8 && x > -1 && y < 8 && y > -1) {
             return Board.tiles[x][y].getOccupyingPiece() == null;
         } else return false;
@@ -159,7 +159,7 @@ public abstract class Piece {
     // Methode zum Erzeugen von FieldButtons
     public boolean moveLogic(int newX, int newY) {
         // Plan ist die Methoden aus den Subklassen zusammenzufassen und hier reinzupacken, da es an sich die selben Schritte überall sind, die nur verschiedenen in den subklassen verteilt sind
-        if (isValidMove(newX, newY)){
+        if (isEmptyTile(newX, newY)){
             Tile newTile = Board.tiles[newX][newY];
             JButton newButton = createFieldButton(newTile);
             Board.tiles[newX][newY].getpTile().add(newButton);
