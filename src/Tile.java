@@ -43,7 +43,7 @@ public class Tile {
     public boolean isOccupied() {
         return (this.occupyingPiece != null);
     }
-    public void setOccupied(boolean occ){
+    public void setOccupied(boolean occupied){
         this.occupied = occupied;
     }
     public JButton getButton() {

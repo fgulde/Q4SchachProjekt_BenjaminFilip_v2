@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.util.Arrays;
 
 public class Queen extends Piece {
     public Queen(boolean isWhite, Tile position) {
@@ -11,15 +10,12 @@ public class Queen extends Piece {
     public void calculateNewPos() {
         //Oben
         Tile currentTile = getPosition();
+        boolean shouldBreak;
         int newX = currentTile.getX();
         for (int i = 1; i < 8; i++) {
             int newY = currentTile.getY() + i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -27,12 +23,8 @@ public class Queen extends Piece {
         newX = currentTile.getX();
         for (int i = 1; i < 8; i++) {
             int newY = currentTile.getY() - i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -40,12 +32,8 @@ public class Queen extends Piece {
         int newY = currentTile.getY();
         for (int i = 1; i < 8; i++) {
             newX = currentTile.getX() + i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -53,12 +41,8 @@ public class Queen extends Piece {
         newY = currentTile.getY();
         for (int i = 1; i < 8; i++) {
             newX = currentTile.getX() - i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -66,12 +50,8 @@ public class Queen extends Piece {
         for (int i = 1; i < 8; i++) {
             newY = currentTile.getY() + i;
             newX = currentTile.getX() + i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -79,12 +59,8 @@ public class Queen extends Piece {
         for (int i = 1; i < 8; i++) {
             newY = currentTile.getY() + i;
             newX = currentTile.getX() - i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -92,12 +68,8 @@ public class Queen extends Piece {
         for (int i = 1; i < 8; i++) {
             newX = currentTile.getX() + i;
             newY = currentTile.getY() - i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
@@ -105,23 +77,11 @@ public class Queen extends Piece {
         for (int i = 1; i < 8; i++) {
             newX = currentTile.getX() - i;
             newY = currentTile.getY() - i;
-            if (isValidMove(newX, newY)){
-                moveLogic(newX,newY);
-            } else if (newX < 8 && newX > -1 && newY < 8 && newY > -1){
-                tryKill(newX,newY);
-                break;
-            } else {
+            shouldBreak = moveLogic(newX, newY);
+            if (shouldBreak) {
                 break;
             }
         }
-    }
-
-    // Methode zum Erzeugen von FieldButtons
-    private void moveLogic(int newX, int newY){
-        Tile newTile = Board.tiles[newX][newY];
-        JButton newButton = createFieldButton(newTile);
-        Board.tiles[newX][newY].getpTile().add(newButton);
-        Board.tiles[newX][newY].getpTile().updateUI();
     }
 
     @Override

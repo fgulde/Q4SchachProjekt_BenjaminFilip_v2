@@ -1,9 +1,5 @@
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 // Spielfigur: Pawn / Bauer
 public class Pawn extends Piece {
@@ -17,39 +13,38 @@ public class Pawn extends Piece {
     @Override
     // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
+        int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
         if (!isMoved()) {
             // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
-            int newY = currentTile.getY() + (2 * direction);
-            Tile newTile = Board.tiles[newX][newY];
+            int newY2 = currentTile.getY() + (2 * direction);
+            Tile newTile = Board.tiles[newX][newY2];
             int newY1 = currentTile.getY() + direction;
             Tile newTile1 = Board.tiles[newX][newY1];
 
             // Überprüfen, ob die neuen Positionen valide sind
-            if (isValidMove(newX, newY) && isValidMove(newX, newY1)) {
-                JButton newButton = createFieldButton(newTile);
-                Board.tiles[newX][newY].getpTile().add(newButton);
-                Board.tiles[newX][newY].getpTile().updateUI();
-                newButton.setDefaultCapable(false);
-            }
-            if (isValidMove(newX, newY1)) {
+            if (isEmptyTile(newX, newY1)) {
                 JButton newButton1 = createFieldButton(newTile1);
                 Board.tiles[newX][newY1].getpTile().add(newButton1);
-                Board.tiles[newX][newY].getpTile().updateUI();
+                Board.tiles[newX][newY2].getpTile().updateUI();
                 tryKill(newX, newY1);
+                if (isEmptyTile(newX, newY2)) {
+                    JButton newButton = createFieldButton(newTile);
+                    Board.tiles[newX][newY2].getpTile().add(newButton);
+                    Board.tiles[newX][newY2].getpTile().updateUI();
+                    newButton.setDefaultCapable(false);
+                }
             }
         } else {
             // Falls der Bauer bereits bewegt wurde, kann er nur noch ein Feld ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
             int newY = currentTile.getY() + direction;
             Tile newTile = Board.tiles[newX][newY];
 
             // Überprüfen, ob die neue Position innerhalb des Spielbretts liegt
-            if (isValidMove(newX, newY)) {
+            if (isEmptyTile(newX, newY)) {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
                 Board.tiles[newX][newY].getpTile().updateUI();
@@ -67,16 +62,9 @@ public class Pawn extends Piece {
             int newX = x + i;
             if (newX < 8 && newX >= 0 && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                tempPieces = Arrays.copyOf(tempPieces, tempPieces.length + 1);
-                tempPieces[tempPieces.length - 1] = tempPiece;
+                tempPieces.add(tempPiece);
 
-                JButton newButton = createKillButton(Board.tiles[newX][y]);
-                newButton.setSelected(true);
-                newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
-
-                Board.tiles[newX][y].getpTile().remove(0);
-                Board.tiles[newX][y].getpTile().add(newButton);
-                Board.tiles[newX][y].getpTile().updateUI();
+                spawnKillButton(Board.tiles[newX][y], tempPiece);
             }
         }
     }
@@ -88,14 +76,13 @@ public class Pawn extends Piece {
             int newX = x + i;
             int newY = y + (isWhite() ? -1 : 1);
 
-            if (isValidMove(newX, newY) && canKill(newX, y)) {
-                Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                if (tempPiece instanceof Pawn && ((Pawn) tempPiece).isEnPassant()) {
+            if (isEmptyTile(newX, newY) && canKill(newX, y) && Board.tiles[newX][y].getOccupyingPiece() instanceof Pawn pawn) {
+                if (pawn.isEnPassant()) {
                     // En Passant capture
 
                     JButton newButton = createEnPassantButton(Board.tiles[newX][newY]);
                     newButton.setSelected(true);
-                    newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+                    newButton.setIcon(pawn.getKillIconPath(pawn.isWhite()));
 
                     Board.tiles[newX][newY].getpTile().add(newButton);
                     Board.tiles[newX][newY].getpTile().updateUI();
@@ -127,15 +114,7 @@ public class Pawn extends Piece {
 
                 // Soundeffekt
                 String promotionSfx = "src/sfx/promotion.wav";
-                try {
-                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(promotionSfx));
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(ais);
-                    clip.setFramePosition(0);
-                    clip.start();
-                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                }
+                PieceActionListener.audioPlay(promotionSfx);
 
                 // Ausgewähltes Piece erzeugen
                 Piece promotedPiece = switch (choice) {
