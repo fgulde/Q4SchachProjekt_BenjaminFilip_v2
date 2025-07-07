@@ -13,9 +13,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.AttributeSet;
 
 
 public class Board {
@@ -872,28 +869,6 @@ public class Board {
             letterRow.add(lLetter);
         }
     }
-
-    private static final DocumentFilter frozenFilter = new DocumentFilter() {
-        @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) {}
-
-        @Override
-        public void remove(FilterBypass fb, int offset, int length) {}
-
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) {}
-    };
-
-    public static void freezeTextArea() {
-        AbstractDocument document = (AbstractDocument) txtA.getDocument();
-        document.setDocumentFilter(frozenFilter);
-    }
-
-    public static void unfreezeTextArea() {
-        AbstractDocument document = (AbstractDocument) txtA.getDocument();
-        document.setDocumentFilter(null);
-    }
-
 
     public static boolean isKingInCheck() {
         return kingInCheck;

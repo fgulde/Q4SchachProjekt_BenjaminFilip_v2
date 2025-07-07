@@ -13,9 +13,9 @@ public class Pawn extends Piece {
     @Override
     // Methode zum Berechnen aller möglichen / erlaubten Bewegungsrichtungen dieses Figurtypen
     public void calculateNewPos() {
+        int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
         if (!isMoved()) {
             // Wenn der Bauer noch nicht bewegt wurde, hat er die Option, um zwei Felder zu ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
             int newY2 = currentTile.getY() + (2 * direction);
@@ -24,21 +24,20 @@ public class Pawn extends Piece {
             Tile newTile1 = Board.tiles[newX][newY1];
 
             // Überprüfen, ob die neuen Positionen valide sind
-            if (isEmptyTile(newX, newY2) && isEmptyTile(newX, newY1)) {
-                JButton newButton = createFieldButton(newTile);
-                Board.tiles[newX][newY2].getpTile().add(newButton);
-                Board.tiles[newX][newY2].getpTile().updateUI();
-                newButton.setDefaultCapable(false);
-            }
             if (isEmptyTile(newX, newY1)) {
                 JButton newButton1 = createFieldButton(newTile1);
                 Board.tiles[newX][newY1].getpTile().add(newButton1);
                 Board.tiles[newX][newY2].getpTile().updateUI();
                 tryKill(newX, newY1);
+                if (isEmptyTile(newX, newY2)) {
+                    JButton newButton = createFieldButton(newTile);
+                    Board.tiles[newX][newY2].getpTile().add(newButton);
+                    Board.tiles[newX][newY2].getpTile().updateUI();
+                    newButton.setDefaultCapable(false);
+                }
             }
         } else {
             // Falls der Bauer bereits bewegt wurde, kann er nur noch ein Feld ziehen
-            int direction = isWhite() ? -1 : 1;  // Richtung hängt von der Farbe des Bauern ab
             Tile currentTile = getPosition();
             int newX = currentTile.getX();
             int newY = currentTile.getY() + direction;
@@ -77,14 +76,13 @@ public class Pawn extends Piece {
             int newX = x + i;
             int newY = y + (isWhite() ? -1 : 1);
 
-            if (isEmptyTile(newX, newY) && canKill(newX, y)) {
-                Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
-                if (tempPiece instanceof Pawn && ((Pawn) tempPiece).isEnPassant()) {
+            if (isEmptyTile(newX, newY) && canKill(newX, y) && Board.tiles[newX][y].getOccupyingPiece() instanceof Pawn pawn) {
+                if (pawn.isEnPassant()) {
                     // En Passant capture
 
                     JButton newButton = createEnPassantButton(Board.tiles[newX][newY]);
                     newButton.setSelected(true);
-                    newButton.setIcon(tempPiece.getKillIconPath(tempPiece.isWhite()));
+                    newButton.setIcon(pawn.getKillIconPath(pawn.isWhite()));
 
                     Board.tiles[newX][newY].getpTile().add(newButton);
                     Board.tiles[newX][newY].getpTile().updateUI();

@@ -64,18 +64,20 @@ public abstract class Piece {
     public abstract void calculateNewPos();
 
     // Methode, die die Figur auf ein neues Feld bewegt
-    public void move(int newX, int newY){
-        Piece piece = Board.tiles[newX][newY].getOccupyingPiece();
-        // fügt move in den Verlauf ein
-        Board.txtA.append(Board.vCounter + ". " + (isWhite() ? "Weiß, " : "Schwarz, ") + getClassName() + ": "
-                + (char)(97+position.getX()) + (8-position.getY()) + " -> " + (char)(97+newX) + (8-newY) + "\n");
-        Board.vCounter++;
+    public void move(int newX, int newY, boolean isRealMove){
+        if (isRealMove){
+            // fügt move in den Verlauf ein
+            Board.txtA.append(Board.vCounter + ". " + (isWhite() ? "Weiß, " : "Schwarz, ") + getClassName() + ": "
+                    + (char)(97+position.getX()) + (8-position.getY()) + " -> " + (char)(97+newX) + (8-newY) + "\n");
+            Board.vCounter++;
+        }
 
         // ändert EnPassant boolean des Bauern zu false, wenn dieselbe Farbe wieder am Zug ist
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++){
                 if (Board.tiles[i][j].getOccupyingPiece() instanceof Pawn pawn){
-                    if (pawn.isWhite() == Board.tiles[position.getX()][position.getY()].getOccupyingPiece().isWhite()){
+                    if (pawn.isWhite() && Board.status.equals(GameStatus.WHITEMOVE) ||
+                            !pawn.isWhite() && Board.status.equals(GameStatus.BLACKMOVE)) {
                         pawn.setEnPassant(false);
                     }
                 }
@@ -86,7 +88,7 @@ public abstract class Piece {
             checkt, ob der Bauer zwei oder ein Feld nach vorne gegangen ist und setzt ihn, wenn ja, auf EnPassant-able
             isDefaultCapable() == false, wird zum Kennzeichnen von Buttons benutzt, die die EnPassant Regel aktivieren
          */
-        if (piece instanceof Pawn pawn && !tempPieces.contains(piece)) {
+        if (this instanceof Pawn pawn && isRealMove) {
             if (!Board.tiles[newX][newY].getButton().isDefaultCapable()) {
                 pawn.setEnPassant(true);
             } else if (Board.tiles[newX][newY].getButton().isDefaultCapable()) {
@@ -130,23 +132,9 @@ public abstract class Piece {
         moved = true;
     }
 
-    // temporarily move a piece to a new tile without updating the game state and between moving it somewhere and back
-    // executes a given method (actionBetweenMoves)
-    public void tempMove(Piece currentPiece, Tile tempTile, Tile originalTile, Runnable actionBetweenMoves) {
-
-        Board.freezeTextArea(); // freeze txtA so move is not recorded
-        //move king to the temp position
-        currentPiece.move(tempTile.getX(), tempTile.getY());
-        Board.vCounter--; // decrease vCounter because it isn't frozen like txtA
-
-        try {
-            actionBetweenMoves.run();
-        } finally {
-            // move piece back to his original position
-            currentPiece.move(originalTile.getX(), originalTile.getY());
-            Board.unfreezeTextArea(); // unfreeze txtA
-            Board.vCounter--; // decrease vCounter because it isn't frozen like txtA
-        }
+    // Overload für move(int newX, int newY, boolean editTxtA) mit editTxtA = true
+    public void move(int newX, int newY) {
+        move(newX, newY, true);
     }
 
     // prüft, ob das jeweilige Feld im Board liegt und ob da nicht eine andere Figur schon drauf ist
@@ -255,17 +243,19 @@ public abstract class Piece {
         }
     }
 
-    // Prüft, ob die Tiles von almostSaviourTiles, tatsächlich den König retten können
     public void validateAlmostSaviourTilesArray_Check(Piece currentPiece) {
+        Tile currentTile = currentPiece.getPosition();
         for (Tile almostSaviourTile : almostSaviourTiles){
-            tempMove(currentPiece, almostSaviourTile, currentPiece.getPosition(), () -> {
-                if (!stillGeneratingKillButton(null)){
-                    saviourTiles.add(almostSaviourTile);
-                }else {
-                    nonSaviourTiles.add(almostSaviourTile);
-                    saviourTiles.remove(almostSaviourTile);
-                }
-            });
+            currentPiece.move(almostSaviourTile.getX(),  almostSaviourTile.getY(), false);
+
+            if (!stillGeneratingKillButton(null)){
+                saviourTiles.add(almostSaviourTile);
+            }else {
+                nonSaviourTiles.add(almostSaviourTile);
+                saviourTiles.remove(almostSaviourTile);
+            }
+
+            currentPiece.move(currentTile.getX(), currentTile.getY(),false);
         }
     }
 
