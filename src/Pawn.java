@@ -24,17 +24,16 @@ public class Pawn extends Piece {
             Tile newTile1 = Board.tiles[newX][newY1];
 
             // Überprüfen, ob die neuen Positionen valide sind
-            if (isEmptyTile(newX, newY1) /*&& Piece.isMoveSafe(this, newX, newY1)*/) {
+            if (isEmptyTile(newX, newY1)) {
                 JButton newButton1 = createFieldButton(newTile1);
                 Board.tiles[newX][newY1].getpTile().add(newButton1);
                 Board.tiles[newX][newY2].getpTile().updateUI();
                 tryKill(newX, newY1);
-                if (isEmptyTile(newX, newY2) /*&&  Piece.isMoveSafe(this, newX, newY2)*/) {
+                if (isEmptyTile(newX, newY2)) {
                     JButton newButton = createFieldButton(newTile);
                     Board.tiles[newX][newY2].getpTile().add(newButton);
                     Board.tiles[newX][newY2].getpTile().updateUI();
                     newButton.setDefaultCapable(false);
-
                 }
             }
         } else {
@@ -45,7 +44,7 @@ public class Pawn extends Piece {
             Tile newTile = Board.tiles[newX][newY];
 
             // Überprüfen, ob die neue Position innerhalb des Spielbretts liegt
-            if (isEmptyTile(newX, newY)/* && Piece.isMoveSafe(this, newX, newY)*/) {
+            if (isEmptyTile(newX, newY)) {
                 JButton newButton = createFieldButton(newTile);
                 Board.tiles[newX][newY].getpTile().add(newButton);
                 Board.tiles[newX][newY].getpTile().updateUI();
@@ -61,7 +60,7 @@ public class Pawn extends Piece {
     public void tryKill(int x, int y) {
         for (int i : new int[]{-1, 1}) {
             int newX = x + i;
-            if (newX < 8 && newX >= 0 && canKill(newX, y) && Piece.isMoveSafe(this, newX, y)) {
+            if (newX < 8 && newX >= 0 && canKill(newX, y)) {
                 Piece tempPiece = Board.tiles[newX][y].getOccupyingPiece();
                 tempPieces.add(tempPiece);
 
