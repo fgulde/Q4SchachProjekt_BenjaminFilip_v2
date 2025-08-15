@@ -532,15 +532,15 @@ public abstract class Piece {
         return false;
     }
 
-    public static boolean isMoveSafe(Piece piece, int newX, int newY) {
-        boolean isSafe;
-        Tile currentPosition = piece.getPosition();
-
-        piece.move(newX, newY, false);
-        isSafe = CheckCheck(piece.isWhite());
-        piece.move(currentPosition.getX(), currentPosition.getY(), false);
-        return isSafe;
-    }
+//    public static boolean isMoveSafe(Piece piece, int newX, int newY) {
+//        boolean isSafe;
+//        Tile currentPosition = piece.getPosition();
+//
+//        piece.move(newX, newY, false);
+//        isSafe = CheckCheck(piece.isWhite());
+//        piece.move(currentPosition.getX(), currentPosition.getY(), false);
+//        return isSafe;
+//    }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean stillGeneratingKillButton(Piece currentPiece){
