@@ -96,7 +96,9 @@ public abstract class Piece {
             }
         }
 
-        Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
+        if (Board.tiles[position.getX()][position.getY()].getpTile() != null && Board.tiles[position.getX()][position.getY()].getpTile().getComponentCount() > 0) {
+            Board.tiles[position.getX()][position.getY()].getpTile().remove(0);
+        }
         getPosition().setOccupied(false); // entfernt die zu bewegende Figur auf ihrem originellen Feld
         Board.tiles[position.getX()][position.getY()].getpTile().updateUI(); // Updatet die GUI
         Tile newTile = Board.tiles[newX][newY]; // Zielposition
