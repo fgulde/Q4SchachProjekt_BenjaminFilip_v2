@@ -600,8 +600,6 @@ public abstract class Piece {
             saviourTiles.clear();
             nonSaviourTiles.clear();
 
-            Tile Position = piece.getPosition();
-
             // checks for if the own King is in Check
             if(CheckCheck(piece.isWhite())){
                 Board.setKingInCheck(true);
@@ -640,42 +638,6 @@ public abstract class Piece {
                                 } else if (c instanceof JButton && ((JButton) c).isSelected() && ((JButton) c).getIcon().toString().contains("src/pics/KillTargetIcons")) {
                                     resetTempPieces(Board.tiles[i][j], ResetMode.ONLY_DESTINATION); // work in progress
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // hier move simulieren und schauen, ob der König danach noch im Check ist
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 8; y++) {
-                    Tile tile = Board.tiles[x][y];
-                    for (int k = 0; k < tile.getpTile().getComponents().length; k++) {
-                        Component c = tile.getpTile().getComponent(k);
-                        if (c instanceof JButton && ((JButton) c).isSelected() && ((JButton) c).getIcon().toString().equals("src/pics/Target.png")) {
-                            piece.move(x, y, false); // Simuliert die Bewegung der Figur
-                            if (CheckCheck(piece.isWhite())) {
-                                tile.getpTile().remove(c);
-                                tile.getpTile().updateUI();
-                            }
-                            piece.move(Position.getX(), Position.getY(), false);
-
-                        } else if (c instanceof JButton && ((JButton) c).isSelected() && ((JButton) c).getIcon().toString().contains("src/pics/KillTargetIcons")) {
-                            Tile originTile = piece.getPosition();
-                            Piece movingPiece = piece;
-                            Piece capturedPiece = tile.getOccupyingPiece();
-
-                            originTile.setOccupyingPiece(null);
-                            tile.setOccupyingPiece(movingPiece);
-
-                            boolean isInCheck = CheckCheck(movingPiece.isWhite());
-
-                            // Zustand zurückrollen
-                            tile.setOccupyingPiece(capturedPiece);
-                            originTile.setOccupyingPiece(movingPiece);
-
-                            if (isInCheck) {
-                                resetTempPieces(tile, ResetMode.ONLY_DESTINATION);
                             }
                         }
                     }
